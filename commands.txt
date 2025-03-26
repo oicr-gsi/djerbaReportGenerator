@@ -6,9 +6,11 @@ This section lists command(s) run by WORKFLOW workflow
 === Description here ===.
 
 <<<
+        mkdir -p ~{outputDir}
+
         $DJERBA_ROOT/bin/djerba.py report \
-		-i Input \
-		-o ./outputDir \
-		--pdf \
-		--no-archive
+            -i ~{Input} \
+            -o ~{outputDir} \
+            --pdf \
+            --no-archive
     >>>
