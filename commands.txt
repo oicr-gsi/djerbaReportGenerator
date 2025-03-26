@@ -1,0 +1,14 @@
+## Commands
+This section lists command(s) run by WORKFLOW workflow
+
+* Running WORKFLOW
+
+=== Description here ===.
+
+<<<
+        $DJERBA_ROOT/bin/djerba.py report \
+		-i Input \
+		-o ./outputDir \
+		--pdf \
+		--no-archive
+    >>>

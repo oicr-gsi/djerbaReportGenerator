@@ -1,0 +1,6 @@
+{
+	"names":[
+		"ClinicalReportGenerator"
+	],
+	"wdl": "ClinicalReportGenerator.wdl"
+}
