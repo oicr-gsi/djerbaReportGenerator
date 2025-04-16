@@ -28,7 +28,7 @@ workflow ClinicalReportGeneration {
     meta {
         author: "Aditi Nagaraj Nallan"
         email: "anallan@oicr.on.ca"
-        description: "Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports, with a modular structure based on plugins."
+        description: "Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports."
         dependencies: [
             {
                 name : "pandas/2.1.3",
