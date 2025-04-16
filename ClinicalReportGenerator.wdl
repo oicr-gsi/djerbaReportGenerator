@@ -50,13 +50,13 @@ workflow ClinicalReportGeneration {
     call queryCallability {
         input:
             LIMS_ID = LIMS_ID,
-            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/ClinicalReportGenerator/callSearch.py"
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/ClinicalReportGenerator/scripts/callSearch.py"
     }
 
     call queryCoverage {
         input:
             LIMS_ID = LIMS_ID,
-            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/ClinicalReportGenerator/covSearch.py"
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/ClinicalReportGenerator/scripts/covSearch.py"
     }
 
     call createINI {
@@ -248,7 +248,7 @@ task runDjerba {
     input {
         String Prefix
         File ini_file
-        String modules = "djerba/1.8.3"
+        String modules = "djerba/1.8.4"
         Int timeout = 10
         Int jobMemory = 25
     }

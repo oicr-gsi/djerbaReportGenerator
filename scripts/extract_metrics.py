@@ -28,12 +28,16 @@ def process_json(data):
         key, value = name.split(': ')
         json_dict[key] = value
 
-    grouped_ids = data.groupby('SampleID')['LIMS ID'].unique().reset_index()
+    lims = data[~(
+        (data['Sequencer Run Platform Name'] == 'Illumina_MiSeq') |
+        (data['Tissue Type'] == 'R') |
+        (data['Library Type'] == 'WT')
+    )]
 
-    for idx, row in grouped_ids.iterrows():
-        set_index = idx + 1
-        json_dict[f'ClinicalReportGeneration.SampleID_{set_index}'] = row['SampleID']
-        json_dict[f'ClinicalReportGeneration.LIMS_ID_set_{set_index}'] = sorted(row['LIMS ID'].tolist())
+    lims_ids = lims['LIMS ID'].unique().tolist()
+    lims_ids.sort()
+    print(lims_ids)
+    json_dict['ClinicalReportGeneration.LIMS_ID'] = lims_ids
 
     return json_dict
 
@@ -42,23 +46,17 @@ def query_fpr(fp_path, donor):
     chunk_size = 10000
     for chunk in pd.read_csv(fp_path, sep='\t', compression='gzip', chunksize = chunk_size):
         filt_chunk = chunk[chunk.iloc[:, 7] == donor]
-        col = filt_chunk.iloc[:, [1,7,13,17,56]]
+        col = filt_chunk.iloc[:, [1,7,13,17,22,56]]
         df_out.append(col)
     
     df = pd.concat(df_out, ignore_index=True)
     df['Library Type'] = df['Sample Attributes'].str.extract(r'geo_library_source_template_type=([^;]+)')
     df['Tissue Type'] = df['Sample Attributes'].str.extract(r'geo_tissue_type=([^;]+)')
-    df['Tissue Origin'] = df['Sample Attributes'].str.extract(r'geo_tissue_origin=([^;]+)')
-    df['Group ID'] = df['Sample Attributes'].str.extract(r'geo_group_id=([^;]+)')
-    df['SampleID'] = df.apply(
-            lambda row: f"{row['Root Sample Name']}_{row['Tissue Origin']}_{row['Tissue Type']}_{row['Library Type']}_{row['Group ID']}",
-            axis=1
-        )
     
-    df = df.drop(columns=['Sample Attributes', 'Tissue Origin', 'Group ID'])
+    df = df.drop('Sample Attributes', axis=1)
     df.drop_duplicates(inplace=True)
-
-    return df
+    
+    return df 
 
 if __name__ == "__main__":
     # create a parser for command line arguments 

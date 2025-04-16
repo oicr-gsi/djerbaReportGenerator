@@ -6,9 +6,7 @@
     "ClinicalReportGeneration.sample_name_tumor": "CACHNG_0017_02_LB01-01",
     "ClinicalReportGeneration.sample_name_normal": "CACHNG_0017_01_LB02-01",
     "ClinicalReportGeneration.sample_name_aux": "CACHNG_0017_02_LB02-01",
-    "ClinicalReportGeneration.SampleID_1": "CACHNG_0017_Co_P_WG_CD-3797",
-    "ClinicalReportGeneration.LIMS_ID_set_1": [
-        "7577_1_LDI116710",
+    "ClinicalReportGeneration.LIMS_ID": [
         "7610_1_LDI116710",
         "7610_2_LDI116710",
         "7610_3_LDI116710",
@@ -25,20 +23,5 @@
         "7654_6_LDI116710",
         "7654_7_LDI116710",
         "7654_8_LDI116710"
-    ],
-    "ClinicalReportGeneration.SampleID_2": "CACHNG_0017_Co_P_WT_CD-3748",
-    "ClinicalReportGeneration.LIMS_ID_set_2": [
-        "7580_1_LDI116846",
-        "7609_7_LDI116846"
-    ],
-    "ClinicalReportGeneration.SampleID_3": "CACHNG_0017_Ly_R_WG_CD-3781",
-    "ClinicalReportGeneration.LIMS_ID_set_3": [
-        "7603_1_LDI117418",
-        "7635_1_LDI117418",
-        "7635_2_LDI117418",
-        "7635_3_LDI117418",
-        "7635_4_LDI117418",
-        "7635_5_LDI117418",
-        "7635_6_LDI117418"
-    ] 
+    ]
 }
