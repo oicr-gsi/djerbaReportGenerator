@@ -18,7 +18,7 @@ workflow ClinicalReportGeneration {
         study: "Study Name"
         donor: "Donor"
         report_id: "Report identifier"
-        sample_name_tumour: "Sample name for the tumour WG sample"
+        sample_name_tumor: "Sample name for the tumour WG sample"
         sample_name_normal: "Sample name for the normal WG sample"
         sample_name_aux: "Sample name for tumor transcriptome (WT)"
         LIMS_ID: "Array of LIMS IDs"
@@ -28,20 +28,28 @@ workflow ClinicalReportGeneration {
     meta {
         author: "Aditi Nagaraj Nallan"
         email: "anallan@oicr.on.ca"
-        description: "Given an input INI file, djerba will be used to generate clinical report documents from pipeline data, with a modular structure based on plugins."
+        description: "Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports, with a modular structure based on plugins."
         dependencies: [
             {
-                name : "djerba/1.8.3",
+                name : "pandas/2.1.3",
+                url: "https://github.com/oicr-gsi/djerba"
+            },
+            {
+                name : "sqlite3/3.39.3",
+                url: "https://github.com/oicr-gsi/djerba"
+            },
+            {
+                name : "djerba/1.8.4",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
         output_meta: {
             reportHTML: {
-                description: "The clinical report in HTML file format",
+                description: "The RUO clinical report in HTML file format",
                 vidarr_label: "reportHTML"
             },
             reportPDF: {
-                description: "The clinical report in PDF file format",
+                description: "The RUO clinical report in PDF file format",
                 vidarr_label: "reportPDF"
             }
         }
