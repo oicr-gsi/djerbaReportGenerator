@@ -1,6 +1,6 @@
 # ClinicalReportGeneration
 
-Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports, with a modular structure based on plugins.
+Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports.
 
 ## Overview
 
@@ -64,7 +64,6 @@ Output | Type | Description | Labels
 `reportJSON`|File|The RUO clinical report in JSON file format|vidarr_label: reportJSON
 
 
-/u/anallan/anallan/repositories/ClinicalReportGenerator/commands.txt found, printing out the content...
 ## Commands
  This section lists command(s) run by ClinicalReportGenerator workflow
  
