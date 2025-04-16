@@ -32,11 +32,11 @@ workflow ClinicalReportGeneration {
         dependencies: [
             {
                 name : "pandas/2.1.3",
-                url: "https://github.com/oicr-gsi/djerba"
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
             {
                 name : "sqlite3/3.39.3",
-                url: "https://github.com/oicr-gsi/djerba"
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_sqlite.yaml?ref_type=heads"
             },
             {
                 name : "djerba/1.8.4",
@@ -51,6 +51,10 @@ workflow ClinicalReportGeneration {
             reportPDF: {
                 description: "The RUO clinical report in PDF file format",
                 vidarr_label: "reportPDF"
+            },
+            reportJSON: {
+                description: "The RUO clinical report in JSON file format",
+                vidarr_label: "reportJSON"
             }
         }
     }
@@ -89,6 +93,7 @@ workflow ClinicalReportGeneration {
     output {
         File reportHTML = runDjerba.report_html
         File reportPDF = runDjerba.report_pdf
+        File reportJSON = runDjerba.report_json
     }
 }
 
@@ -288,5 +293,6 @@ task runDjerba {
     output {
         File report_html = "~{Prefix}/~{Prefix}_report.research.html"
         File report_pdf = "~{Prefix}/~{Prefix}_report.research.pdf"
+        File report_json = "~{Prefix}/~{Prefix}_report.json"
     }
 }
