@@ -1,4 +1,4 @@
-[
+{
     "arguments":{
         "ClinicalReportGeneration.project": {
             "contents": {
@@ -155,4 +155,4 @@
             "type": "script"
         }
     ]
-]
+}
