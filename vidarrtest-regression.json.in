@@ -1,0 +1,158 @@
+[
+    "arguments":{
+        "ClinicalReportGeneration.project": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.study": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.donor": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.report_id": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.sample_name_tumor": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.sample_name_normal": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.sample_name_aux": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.LIMS_ID": {
+            "contents": {
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "externalIds": [
+                    {
+                        "id": "TEST",
+                        "provider": "TEST"
+                    }
+                ]
+            },
+            "type": "EXTERNAL"
+        },
+        "ClinicalReportGeneration.outputFileNamePrefix": null,
+        "ClinicalReportGeneration.queryCallability.python_script": null,
+        "ClinicalReportGeneration.queryCallability.modules": null,
+        "ClinicalReportGeneration.queryCallability.timeout": null,
+        "ClinicalReportGeneration.queryCallability.jobMemory": null,
+        "ClinicalReportGeneration.queryCoverage.python_script": null,
+        "ClinicalReportGeneration.queryCoverage.modules": null,
+        "ClinicalReportGeneration.queryCoverage.timeout": null,
+        "ClinicalReportGeneration.queryCoverage.jobMemory": null,
+        "ClinicalReportGeneration.createINI.callability": null,
+        "ClinicalReportGeneration.createINI.mean_coverage": null,
+        "ClinicalReportGeneration.createINI.timeout": null,
+        "ClinicalReportGeneration.createINI.jobMemory": null,
+        "ClinicalReportGeneration.runDjerba.Prefix": null,
+        "ClinicalReportGeneration.runDjerba.ini_file": null,
+        "ClinicalReportGeneration.runDjerba.modules": null,
+        "ClinicalReportGeneration.runDjerba.timeout": null,
+        "ClinicalReportGeneration.runDjerba.jobMemory": null
+    },
+    "description": "ClinicalReportGenerator workflow test",
+    "engineArguments": {
+        "write_to_cache": false,
+        "read_from_cache": false
+    },
+    "id": "workflow_test_01",
+    "metadata": {
+        "ClinicalReportGeneration.reportHTML": {
+            "contents": [
+                {
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_ClinicalReportGenerator_workflow_test_01_@JENKINSID@"
+                }
+            ],
+            "type": "ALL"
+        },
+        "ClinicalReportGeneration.reportPDF": {
+            "contents": [
+                {
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_ClinicalReportGenerator_workflow_test_01_@JENKINSID@"
+                }
+            ],
+            "type": "ALL"
+        },
+        "ClinicalReportGeneration.reportJSON": {
+            "contents": [
+                {
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_ClinicalReportGenerator_workflow_test_01_@JENKINSID@"
+                }
+            ],
+            "type": "ALL"
+        }
+    },
+    "validators": [
+        {
+            "metrics_calculate": "@CHECKOUT@/tests/calculate.sh",
+            "metrics_compare": "@CHECKOUT@/tests/compare.sh",
+            "output_metrics": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/output_metrics/workflow_test_01.metrics"
+            "type": "script"
+        }
+    ]
+]
