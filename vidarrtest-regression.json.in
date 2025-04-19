@@ -3,7 +3,7 @@
     "arguments":{
         "ClinicalReportGeneration.project": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -15,7 +15,7 @@
         },
         "ClinicalReportGeneration.study": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -27,7 +27,7 @@
         },
         "ClinicalReportGeneration.donor": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -39,7 +39,7 @@
         },
         "ClinicalReportGeneration.report_id": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -51,7 +51,7 @@
         },
         "ClinicalReportGeneration.sample_name_tumor": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -63,7 +63,7 @@
         },
         "ClinicalReportGeneration.sample_name_normal": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -75,7 +75,7 @@
         },
         "ClinicalReportGeneration.sample_name_aux": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -87,7 +87,7 @@
         },
         "ClinicalReportGeneration.LIMS_ID": {
             "contents": {
-                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json"
+                "configuration": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/input_data/CACHNG_0017.json",
                 "externalIds": [
                     {
                         "id": "TEST",
@@ -152,7 +152,7 @@
         {
             "metrics_calculate": "@CHECKOUT@/tests/calculate.sh",
             "metrics_compare": "@CHECKOUT@/tests/compare.sh",
-            "output_metrics": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/output_metrics/workflow_test_01.metrics"
+            "output_metrics": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/output_metrics/workflow_test_01.metrics",
             "type": "script"
             }
         ]
