@@ -1,4 +1,5 @@
-{
+[
+    {
     "arguments":{
         "ClinicalReportGeneration.project": {
             "contents": {
@@ -153,6 +154,7 @@
             "metrics_compare": "@CHECKOUT@/tests/compare.sh",
             "output_metrics": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/output_metrics/workflow_test_01.metrics"
             "type": "script"
-        }
-    ]
-}
+            }
+        ]
+    }
+]
