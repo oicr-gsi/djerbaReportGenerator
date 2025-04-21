@@ -33,7 +33,7 @@
         "write_to_cache": false,
         "read_from_cache": false
     },
-    "id": "workflow_test_01",
+    "id": "workflow_test_01_with_CACHNG",
     "metadata": {
         "ClinicalReportGeneration.reportHTML": {
             "contents": [
