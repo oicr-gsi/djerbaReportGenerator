@@ -1,6 +1,6 @@
 version 1.0
 
-workflow ClinicalReportGeneration {
+workflow ClinicalReportGenerator {
     input {
         String project
         String study

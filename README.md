@@ -1,4 +1,4 @@
-# ClinicalReportGeneration
+# ClinicalReportGenerator
 
 Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports.
 
