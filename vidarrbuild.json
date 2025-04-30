@@ -1,6 +1,6 @@
 {
 	"names":[
-		"ClinicalReportGenerator"
+		"DjerbaReportGenerator"
 	],
-	"wdl": "ClinicalReportGenerator.wdl"
+	"wdl": "DjerbaReportGenerator.wdl"
 }

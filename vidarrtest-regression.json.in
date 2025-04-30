@@ -1,32 +1,32 @@
 [
     {
     "arguments":{
-        "ClinicalReportGenerator.project": "CACHNG",
-        "ClinicalReportGenerator.study": "CACHNG",
-        "ClinicalReportGenerator.donor": "CACHNG_0017",
-        "ClinicalReportGenerator.report_id": "CACHNG_0017",
-        "ClinicalReportGenerator.sample_name_tumor": "CACHNG_0017_02_LB01-01",
-        "ClinicalReportGenerator.sample_name_normal": "CACHNG_0017_01_LB02-01",
-        "ClinicalReportGenerator.sample_name_aux": "CACHNG_0017_02_LB02-01",
-        "ClinicalReportGenerator.LIMS_ID": ["7610_1_LDI116710", "7610_2_LDI116710", "7610_3_LDI116710", "7610_4_LDI116710", "7610_5_LDI116710", "7610_6_LDI116710", "7610_7_LDI116710", "7610_8_LDI116710", "7654_1_LDI116710", "7654_2_LDI116710", "7654_3_LDI116710", "7654_4_LDI116710", "7654_5_LDI116710", "7654_6_LDI116710", "7654_7_LDI116710", "7654_8_LDI116710"],
-        "ClinicalReportGenerator.outputFileNamePrefix": null,
-        "ClinicalReportGenerator.queryCallability.python_script": null,
-        "ClinicalReportGenerator.queryCallability.modules": null,
-        "ClinicalReportGenerator.queryCallability.timeout": null,
-        "ClinicalReportGenerator.queryCallability.jobMemory": null,
-        "ClinicalReportGenerator.queryCoverage.python_script": null,
-        "ClinicalReportGenerator.queryCoverage.modules": null,
-        "ClinicalReportGenerator.queryCoverage.timeout": null,
-        "ClinicalReportGenerator.queryCoverage.jobMemory": null,
-        "ClinicalReportGenerator.createINI.callability": null,
-        "ClinicalReportGenerator.createINI.mean_coverage": null,
-        "ClinicalReportGenerator.createINI.timeout": null,
-        "ClinicalReportGenerator.createINI.jobMemory": null,
-        "ClinicalReportGenerator.runDjerba.Prefix": null,
-        "ClinicalReportGenerator.runDjerba.ini_file": null,
-        "ClinicalReportGenerator.runDjerba.modules": null,
-        "ClinicalReportGenerator.runDjerba.timeout": null,
-        "ClinicalReportGenerator.runDjerba.jobMemory": null
+        "DjerbaReportGenerator.project": "CACHNG",
+        "DjerbaReportGenerator.study": "CACHNG",
+        "DjerbaReportGenerator.donor": "CACHNG_0017",
+        "DjerbaReportGenerator.report_id": "CACHNG_0017",
+        "DjerbaReportGenerator.sample_name_tumor": "CACHNG_0017_02_LB01-01",
+        "DjerbaReportGenerator.sample_name_normal": "CACHNG_0017_01_LB02-01",
+        "DjerbaReportGenerator.sample_name_aux": "CACHNG_0017_02_LB02-01",
+        "DjerbaReportGenerator.LIMS_ID": ["7610_1_LDI116710", "7610_2_LDI116710", "7610_3_LDI116710", "7610_4_LDI116710", "7610_5_LDI116710", "7610_6_LDI116710", "7610_7_LDI116710", "7610_8_LDI116710", "7654_1_LDI116710", "7654_2_LDI116710", "7654_3_LDI116710", "7654_4_LDI116710", "7654_5_LDI116710", "7654_6_LDI116710", "7654_7_LDI116710", "7654_8_LDI116710"],
+        "DjerbaReportGenerator.outputFileNamePrefix": null,
+        "DjerbaReportGenerator.queryCallability.python_script": null,
+        "DjerbaReportGenerator.queryCallability.modules": null,
+        "DjerbaReportGenerator.queryCallability.timeout": null,
+        "DjerbaReportGenerator.queryCallability.jobMemory": null,
+        "DjerbaReportGenerator.queryCoverage.python_script": null,
+        "DjerbaReportGenerator.queryCoverage.modules": null,
+        "DjerbaReportGenerator.queryCoverage.timeout": null,
+        "DjerbaReportGenerator.queryCoverage.jobMemory": null,
+        "DjerbaReportGenerator.createINI.callability": null,
+        "DjerbaReportGenerator.createINI.mean_coverage": null,
+        "DjerbaReportGenerator.createINI.timeout": null,
+        "DjerbaReportGenerator.createINI.jobMemory": null,
+        "DjerbaReportGenerator.runDjerba.Prefix": null,
+        "DjerbaReportGenerator.runDjerba.ini_file": null,
+        "DjerbaReportGenerator.runDjerba.modules": null,
+        "DjerbaReportGenerator.runDjerba.timeout": null,
+        "DjerbaReportGenerator.runDjerba.jobMemory": null
     },
     "description": "workflow_test_01_with_CACHNG",
     "engineArguments": {
@@ -35,26 +35,26 @@
     },
     "id": "workflow_test_01_with_CACHNG",
     "metadata": {
-        "ClinicalReportGenerator.reportHTML": {
+        "DjerbaReportGenerator.reportHTML": {
             "contents": [
                 {
-                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_ClinicalReportGenerator_workflow_test_01_with_CACHNG_@JENKINSID@"
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_DjerbaReportGenerator_workflow_test_01_with_CACHNG_@JENKINSID@"
                 }
             ],
             "type": "ALL"
         },
-        "ClinicalReportGenerator.reportPDF": {
+        "DjerbaReportGenerator.reportPDF": {
             "contents": [
                 {
-                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_ClinicalReportGenerator_workflow_test_01_with_CACHNG_@JENKINSID@"
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_DjerbaReportGenerator_workflow_test_01_with_CACHNG_@JENKINSID@"
                 }
             ],
             "type": "ALL"
         },
-        "ClinicalReportGenerator.reportJSON": {
+        "DjerbaReportGenerator.reportJSON": {
             "contents": [
                 {
-                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_ClinicalReportGenerator_workflow_test_01_with_CACHNG_@JENKINSID@"
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_DjerbaReportGenerator_workflow_test_01_with_CACHNG_@JENKINSID@"
                 }
             ],
             "type": "ALL"
@@ -64,7 +64,7 @@
         {
             "metrics_calculate": "@CHECKOUT@/tests/calculate.sh",
             "metrics_compare": "@CHECKOUT@/tests/compare.sh",
-            "output_metrics": "/.mounts/labs/gsi/testdata/ClinicalReportGenerator/output_metrics/workflow_test_01_with_CACHNG.metrics",
+            "output_metrics": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/output_metrics/workflow_test_01_with_CACHNG.metrics",
             "type": "script"
             }
         ]

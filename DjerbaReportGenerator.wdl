@@ -1,6 +1,6 @@
 version 1.0
 
-workflow ClinicalReportGenerator {
+workflow DjerbaReportGenerator {
     input {
         String project
         String study
@@ -28,7 +28,7 @@ workflow ClinicalReportGenerator {
     meta {
         author: "Aditi Nagaraj Nallan"
         email: "anallan@oicr.on.ca"
-        description: "Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports."
+        description: "Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO reports."
         dependencies: [
             {
                 name : "pandas/2.1.3",
@@ -45,15 +45,15 @@ workflow ClinicalReportGenerator {
         ]
         output_meta: {
             reportHTML: {
-                description: "The RUO clinical report in HTML file format",
+                description: "The RUO report in HTML file format",
                 vidarr_label: "reportHTML"
             },
             reportPDF: {
-                description: "The RUO clinical report in PDF file format",
+                description: "The RUO report in PDF file format",
                 vidarr_label: "reportPDF"
             },
             reportJSON: {
-                description: "The RUO clinical report in JSON file format",
+                description: "The RUO report in JSON file format",
                 vidarr_label: "reportJSON"
             }
         }
@@ -62,13 +62,13 @@ workflow ClinicalReportGenerator {
     call queryCallability {
         input:
             LIMS_ID = LIMS_ID,
-            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/ClinicalReportGenerator/scripts/callSearch.py"
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/callSearch.py"
     }
 
     call queryCoverage {
         input:
             LIMS_ID = LIMS_ID,
-            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/ClinicalReportGenerator/scripts/covSearch.py"
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/covSearch.py"
     }
 
     call createINI {

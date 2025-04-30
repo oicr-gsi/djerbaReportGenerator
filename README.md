@@ -1,6 +1,6 @@
-# ClinicalReportGenerator
+# DjerbaReportGenerator
 
-Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO clinical reports.
+Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO reports.
 
 ## Overview
 
@@ -15,7 +15,7 @@ Given metrics from file provenance, the workflow will create an intermediate INI
 
 ### Cromwell
 ```
-java -jar cromwell.jar run ClinicalReportGenerator.wdl --inputs inputs.json
+java -jar cromwell.jar run DjerbaReportGenerator.wdl --inputs inputs.json
 ```
 
 ### Inputs
@@ -59,17 +59,17 @@ Parameter|Value|Default|Description
 
 Output | Type | Description | Labels
 ---|---|---|---
-`reportHTML`|File|The RUO clinical report in HTML file format|vidarr_label: reportHTML
-`reportPDF`|File|The RUO clinical report in PDF file format|vidarr_label: reportPDF
-`reportJSON`|File|The RUO clinical report in JSON file format|vidarr_label: reportJSON
+`reportHTML`|File|The RUO report in HTML file format|vidarr_label: reportHTML
+`reportPDF`|File|The RUO report in PDF file format|vidarr_label: reportPDF
+`reportJSON`|File|The RUO report in JSON file format|vidarr_label: reportJSON
 
 
 ## Commands
- This section lists command(s) run by ClinicalReportGenerator workflow
+ This section lists command(s) run by DjerbaReportGenerator workflow
  
- * Running ClinicalReportGenerator
+ * Running DjerbaReportGenerator
  
- ClinicalReportGenerator creates RUO Clinical Reports specifically and Clinical Reports generally from fpr queried metrics by generating intermediate INI files and running Djerba 1.8.4. 
+ DjerbaReportGenerator creates RUO Reports specifically and Clinical Reports generally from fpr queried metrics by generating intermediate INI files and running Djerba 1.8.4. 
  
  
  Retrieve callability from mutectcallability qc-etl cache

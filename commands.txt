@@ -1,9 +1,9 @@
 ## Commands
-This section lists command(s) run by ClinicalReportGenerator workflow
+This section lists command(s) run by DjerbaReportGenerator workflow
 
-* Running ClinicalReportGenerator
+* Running DjerbaReportGenerator
 
-ClinicalReportGenerator creates RUO Clinical Reports specifically and Clinical Reports generally from fpr queried metrics by generating intermediate INI files and running Djerba 1.8.4. 
+DjerbaReportGenerator creates RUO Reports specifically and Clinical Reports generally from fpr queried metrics by generating intermediate INI files and running Djerba 1.8.4. 
 
 
 Retrieve callability from mutectcallability qc-etl cache
