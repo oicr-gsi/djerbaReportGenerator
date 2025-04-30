@@ -7,22 +7,22 @@ def process_json(data):
     json_dict = {}
     study_title = data['Study Title'].iloc[0]
     if data['Study Title'].nunique() == 1:
-        json_dict['ClinicalReportGeneration.project'] = study_title
-        json_dict['ClinicalReportGeneration.study'] = study_title
+        json_dict['DjerbaReportGenerator.project'] = study_title
+        json_dict['DjerbaReportGenerator.study'] = study_title
 
     root_sample_name = data['Root Sample Name'].iloc[0]
     if data['Root Sample Name'].nunique() == 1:
-        json_dict['ClinicalReportGeneration.donor'] = root_sample_name
-        json_dict['ClinicalReportGeneration.report_id'] = root_sample_name
+        json_dict['DjerbaReportGenerator.donor'] = root_sample_name
+        json_dict['DjerbaReportGenerator.report_id'] = root_sample_name
     
     sample_names = []
     for _, row in data.iterrows():
         if row['Library Type'] == 'WG' and row['Tissue Type'] == 'P':
-            sample_names.append(f"ClinicalReportGeneration.sample_name_tumor: {row['Sample Name']}")
+            sample_names.append(f"DjerbaReportGenerator.sample_name_tumor: {row['Sample Name']}")
         elif row['Library Type'] == 'WG' and row['Tissue Type'] == 'R':
-            sample_names.append(f"ClinicalReportGeneration.sample_name_normal: {row['Sample Name']}")
+            sample_names.append(f"DjerbaReportGenerator.sample_name_normal: {row['Sample Name']}")
         elif row['Library Type'] == 'WT' and row['Tissue Type'] == 'P':
-            sample_names.append(f"ClinicalReportGeneration.sample_name_aux: {row['Sample Name']}")
+            sample_names.append(f"DjerbaReportGenerator.sample_name_aux: {row['Sample Name']}")
 
     for name in sample_names:
         key, value = name.split(': ')
@@ -37,7 +37,7 @@ def process_json(data):
     lims_ids = lims['LIMS ID'].unique().tolist()
     lims_ids.sort()
     print(lims_ids)
-    json_dict['ClinicalReportGeneration.LIMS_ID'] = lims_ids
+    json_dict['DjerbaReportGenerator.LIMS_ID'] = lims_ids
 
     return json_dict
 
@@ -61,7 +61,7 @@ def query_fpr(fp_path, donor):
 if __name__ == "__main__":
     # create a parser for command line arguments 
     parser = argparse.ArgumentParser(
-        description='Extract metrics from FPR and generate an input json file for ClinicalReportGenerator.wdl '
+        description='Extract metrics from FPR and generate an input json file for DjerbaReportGenerator.wdl '
     )
     parser.add_argument(
         'donor',
