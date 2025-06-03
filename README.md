@@ -8,7 +8,7 @@ Given metrics from file provenance, the workflow will create an intermediate INI
 
 * [pandas 2.1.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads)
 * [sqlite3 3.39.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_sqlite.yaml?ref_type=heads)
-* [djerba 1.8.4](https://github.com/oicr-gsi/djerba)
+* [djerba 1.9.2](https://github.com/oicr-gsi/djerba)
 
 
 ## Usage
@@ -24,12 +24,24 @@ java -jar cromwell.jar run DjerbaReportGenerator.wdl --inputs inputs.json
 Parameter|Value|Description
 ---|---|---
 `project`|String|Project name
-`study`|String|Study Name
+`study`|String|Study
 `donor`|String|Donor
 `report_id`|String|Report identifier
+`assay`|String|Assay name
+`tumor_id`|String|Tumor sample identifier
+`normal_id`|String|Matched normal sample identifier
 `sample_name_tumor`|String|Sample name for the tumour WG sample
 `sample_name_normal`|String|Sample name for the normal WG sample
 `sample_name_aux`|String|Sample name for tumor transcriptome (WT)
+`purple_zip`|File|Path to purple output
+`msi_file`|File|Path to msi output
+`ctdna_file`|File|Path to SNP counts
+`hrd_path`|File|Path to genomic signatures
+`patient_study_id`|String|Patient identifier
+`maf_path`|File|Path to mutect2 output
+`mavis_path`|File|Path to mavis output
+`arriba_path`|File|Path to gene fusion output
+`rsem_genes_results`|File|Path to rsem output
 `LIMS_ID`|Array[String]|Array of LIMS IDs
 
 
@@ -42,15 +54,16 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"pandas/2.1.3 sqlite3/3.39.3"|Name and version of module to be loaded
+`queryCallability.modules`|String|"gsi-qc-etl/1.34"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"pandas/2.1.3 sqlite3/3.39.3"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"gsi-qc-etl/1.34"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
+`createINI.modules`|String|"pandas/2.1.3"|Name and version of module to be loaded
 `createINI.timeout`|Int|4|Timeout in hours
 `createINI.jobMemory`|Int|2|Memory in Gb for this job
-`runDjerba.modules`|String|"djerba/1.8.4"|Name and version of module to be loaded
+`runDjerba.modules`|String|"djerba/1.9.2"|Name and version of module to be loaded
 `runDjerba.timeout`|Int|10|Timeout in hours
 `runDjerba.jobMemory`|Int|25|Memory in Gb for this job
 
@@ -64,6 +77,7 @@ Output | Type | Description | Labels
 `reportJSON`|File|The RUO report in JSON file format|vidarr_label: reportJSON
 
 
+./commands.txt found, printing out the content...
 ## Commands
  This section lists command(s) run by DjerbaReportGenerator workflow
  
