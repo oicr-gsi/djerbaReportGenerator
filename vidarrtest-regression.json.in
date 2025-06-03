@@ -5,9 +5,101 @@
         "DjerbaReportGenerator.study": "CACHNG",
         "DjerbaReportGenerator.donor": "CACHNG_0017",
         "DjerbaReportGenerator.report_id": "CACHNG_0017",
+        "DjerbaReportGenerator.assay": "WGTS",
+        "DjerbaReportGenerator.tumor_id": "OCT-01-1980-T1FC_Co_P",
+        "DjerbaReportGenerator.normal_id": "CD-3781",
         "DjerbaReportGenerator.sample_name_tumor": "CACHNG_0017_02_LB01-01",
         "DjerbaReportGenerator.sample_name_normal": "CACHNG_0017_01_LB02-01",
         "DjerbaReportGenerator.sample_name_aux": "CACHNG_0017_02_LB02-01",
+        "DjerbaReportGenerator.purple_zip": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_CD-3797.solPrimary.purple.zip",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.msi_file": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_WG_CD-3797.filter.deduped.recalibrated.msi.booted",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.ctdna_file": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_CD-3797.SNP.count.txt",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.hrd_path": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_WG_CD-3797.signatures.json",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.patient_study_id": "OCT-01-1980-T1FC",
+        "DjerbaReportGenerator.maf_path": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_WG_CD-3797.mutect2.filtered.maf.gz",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.mavis_path": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P.mavis_summary.tab",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.arriba_path": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_WT_CD-3748.fusions.tsv",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
+        "DjerbaReportGenerator.rsem_genes_results": {
+            "contents":{
+                "configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/CACHNG_0017_Co_P_WT_CD-3748.genes.results",
+                "externalIds": [
+                    {
+                        "id": "CACHNG_0017",
+                        "provider": "CACHNG_0017"
+                    }
+                ]
+            }
+        },
         "DjerbaReportGenerator.LIMS_ID": ["7610_1_LDI116710", "7610_2_LDI116710", "7610_3_LDI116710", "7610_4_LDI116710", "7610_5_LDI116710", "7610_6_LDI116710", "7610_7_LDI116710", "7610_8_LDI116710", "7654_1_LDI116710", "7654_2_LDI116710", "7654_3_LDI116710", "7654_4_LDI116710", "7654_5_LDI116710", "7654_6_LDI116710", "7654_7_LDI116710", "7654_8_LDI116710"],
         "DjerbaReportGenerator.outputFileNamePrefix": null,
         "DjerbaReportGenerator.queryCallability.python_script": null,

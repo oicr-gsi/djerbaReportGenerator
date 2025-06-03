@@ -6,21 +6,45 @@ workflow DjerbaReportGenerator {
         String study
         String donor
         String report_id
+        String assay
+        String tumor_id
+        String normal_id
         String sample_name_tumor
         String sample_name_normal
         String sample_name_aux
+        File purple_zip
+        File msi_file
+        File ctdna_file
+        File hrd_path
+        String patient_study_id
+        File maf_path
+        File mavis_path
+        File arriba_path
+        File rsem_genes_results
         Array[String] LIMS_ID
         String outputFileNamePrefix = donor  
     }
 
     parameter_meta {
         project: "Project name"
-        study: "Study Name"
+        study: "Study"
         donor: "Donor"
         report_id: "Report identifier"
+        assay: "Assay name"
+        tumor_id: "Tumor sample identifier"
+        normal_id: "Matched normal sample identifier"
         sample_name_tumor: "Sample name for the tumour WG sample"
         sample_name_normal: "Sample name for the normal WG sample"
         sample_name_aux: "Sample name for tumor transcriptome (WT)"
+        purple_zip: "Path to purple output"
+        msi_file: "Path to msi output"
+        ctdna_file: "Path to SNP counts"
+        hrd_path: "Path to genomic signatures"
+        patient_study_id: "Patient identifier"
+        maf_path: "Path to mutect2 output"
+        mavis_path: "Path to mavis output"
+        arriba_path: "Path to gene fusion output"
+        rsem_genes_results: "Path to rsem output"
         LIMS_ID: "Array of LIMS IDs"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
     }
@@ -39,7 +63,7 @@ workflow DjerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_sqlite.yaml?ref_type=heads"
             },
             {
-                name : "djerba/1.8.4",
+                name : "djerba/1.9.2",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -62,32 +86,60 @@ workflow DjerbaReportGenerator {
     call queryCallability {
         input:
             LIMS_ID = LIMS_ID,
-            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/callSearch.py"
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/callSearch.py",
+            active_cache = "/scratch2/groups/gsi/production/qcetl_v1",
+            archival_cache = "/scratch2/groups/gsi/production/qcetl_archival"
     }
 
     call queryCoverage {
         input:
             LIMS_ID = LIMS_ID,
-            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/covSearch.py"
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/covSearch.py",
+            active_cache = "/scratch2/groups/gsi/production/qcetl_v1",
+            archival_cache = "/scratch2/groups/gsi/production/qcetl_archival"
     }
 
     call createINI {
         input:
-            donor = donor,
             project = project,
-            sample_name_tumor = sample_name_tumor,
-            sample_name_normal = sample_name_normal,
-            sample_name_aux = sample_name_aux,
+            donor = donor,
+            study = study,
             report_id = report_id,
+            assay = assay,
+            tumor_id = tumor_id,
+            normal_id = normal_id,
+            purple_zip = purple_zip,
+            msi_file = msi_file,
+            ctdna_file = ctdna_file,
+            hrd_path = hrd_path,
+            patient_study_id = patient_study_id,
+            maf_path = maf_path,
+            mavis_path = mavis_path,
+            arriba_path = arriba_path,
+            rsem_genes_results = rsem_genes_results,
             callability = queryCallability.callability,
             mean_coverage = queryCoverage.mean_coverage,
-            study = study
+            python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/createIni.py"
+    }
+
+    call createIntermediaries {
+        input:
+            project = project,
+            donor = donor,
+            patient_study_id = patient_study_id,
+            tumor_id = tumor_id,
+            normal_id = normal_id,
+            sample_name_tumor = sample_name_tumor,
+            sample_name_normal = sample_name_normal,
+            sample_name_aux = sample_name_aux
     }
 
     call runDjerba {
         input:
             Prefix = outputFileNamePrefix,
-            ini_file = createINI.ini_file
+            ini_file = createINI.ini_file,
+            sample_info = createIntermediaries.sample_info,
+            provenance_subset = createIntermediaries.provenance_subset
     }
 
     output {
@@ -105,7 +157,9 @@ task queryCallability {
     input {
         Array[String] LIMS_ID
         String python_script 
-        String modules = "pandas/2.1.3 sqlite3/3.39.3"
+        String active_cache
+        String archival_cache
+        String modules = "gsi-qc-etl/1.34"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -113,6 +167,8 @@ task queryCallability {
     parameter_meta {
         LIMS_ID: "The LIMS Identifiers that will be used to query the cache"
         python_script: "Path to the Python script that queries the SQLite database"
+        active_cache: "Path to the qc etl cache for active projects"
+        archival_cache: "Path to the qc etl cache for all active and inactive projects"
         modules: "Name and version of module to be loaded"
         timeout: "Timeout in hours"
         jobMemory: "Memory in Gb for this job" 
@@ -120,7 +176,7 @@ task queryCallability {
 
     command <<<
         LIMS_IDS="~{sep=" " LIMS_ID}"
-        python3 ~{python_script} $LIMS_IDS
+        python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
     >>>
 
     runtime {
@@ -138,7 +194,9 @@ task queryCoverage {
     input {
         Array[String] LIMS_ID
         String python_script 
-        String modules = "pandas/2.1.3 sqlite3/3.39.3"
+        String active_cache
+        String archival_cache
+        String modules = "gsi-qc-etl/1.34"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -146,6 +204,8 @@ task queryCoverage {
     parameter_meta {
         LIMS_ID: "The LIMS Identifiers that will be used to query the cache"
         python_script: "Path to the Python script that queries the SQLite database"
+        active_cache: "Path to the qc etl cache for active projects"
+        archival_cache: "Path to the qc etl cache for all active and inactive projects"
         modules: "Name and version of module to be loaded"
         timeout: "Timeout in hours"
         jobMemory: "Memory in Gb for this job" 
@@ -153,7 +213,7 @@ task queryCoverage {
 
     command <<<
         LIMS_IDS="~{sep=" " LIMS_ID}"
-        python3 ~{python_script} $LIMS_IDS
+        python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
     >>>
 
     runtime {
@@ -169,91 +229,132 @@ task queryCoverage {
 
 task createINI {
     input {
-        String donor
         String project
-        String sample_name_tumor
-        String sample_name_normal
-        String sample_name_aux
+        String study
+        String donor
         String report_id
+        String assay
+        String tumor_id
+        String normal_id
+        String purple_zip
+        String msi_file
+        String ctdna_file
+        String hrd_path
+        String patient_study_id
+        String maf_path
+        String mavis_path
+        String arriba_path
+        String rsem_genes_results
         String callability
         String mean_coverage
-        String study
+        String python_script
+        String modules = "pandas/2.1.3"
         Int timeout = 4
         Int jobMemory = 2
     }
 
     parameter_meta {
-        donor: "Donor"
         project: "Project name"
-        sample_name_tumor: "Sample name for the tumor WG sample"
-        sample_name_normal: "Sample name for the normal WG sample"
-        sample_name_aux: "Sample name for tumor transcriptome (WT)"
+        study: "Study"
+        donor: "Donor"
         report_id: "Report identifier"
+        assay: "Assay name"
+        tumor_id: "Tumor sample identifier"
+        normal_id: "Matched normal sample identifier"
+        purple_zip: "Path to purple output"
+        msi_file: "Path to msi output"
+        ctdna_file: "Path to SNP counts"
+        hrd_path: "Path to genome signatures"
+        patient_study_id: "Patient identifier"
+        maf_path: "Path to mutect2 output"
+        mavis_path: "Path to mavis output"
+        arriba_path: "Path to gene fusion output"
+        rsem_genes_results: "Path to rsem output"
         callability: "Callability value from queryCallability task"
         mean_coverage: "Mean coverage value from queryCoverage task"
-        study: "Study"
+        python_script: "Path to the Python script that creates the INI file"
+        modules: "Name and version of module to be loaded"
         jobMemory: "Memory in Gb for this job"
         timeout: "Timeout in hours"
     }
 
     command <<<
-        echo "[core]" > temp_ini_file.ini
-        echo "report_id = ~{report_id}" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[input_params_helper]" >> temp_ini_file.ini
-        echo "assay = WGTS" >> temp_ini_file.ini
-        echo "donor = ~{donor}" >> temp_ini_file.ini
-        echo "oncotree_code = NA" >> temp_ini_file.ini
-        echo "primary_cancer = NA" >> temp_ini_file.ini
-        echo "project = ~{project}" >> temp_ini_file.ini
-        echo "requisition_approved = 2025-01-01" >> temp_ini_file.ini
-        echo "requisition_id = NA" >> temp_ini_file.ini
-        echo "sample_type = NA" >> temp_ini_file.ini
-        echo "site_of_biopsy = NA" >> temp_ini_file.ini
-        echo "study = ~{study}" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[provenance_helper]" >> temp_ini_file.ini
-        echo "sample_name_tumour = ~{sample_name_tumor}" >> temp_ini_file.ini
-        echo "sample_name_normal = ~{sample_name_normal}" >> temp_ini_file.ini
-        echo "sample_name_aux = ~{sample_name_aux}" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[case_overview]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[sample]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "callability = ~{callability}" >> temp_ini_file.ini
-        echo "mean_coverage = ~{mean_coverage}" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[genomic_landscape]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[expression_helper]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[wgts.snv_indel]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[wgts.cnv_purple]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[fusion]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[gene_information_merger]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
-        echo "" >> temp_ini_file.ini
-        echo "[supplement.body]" >> temp_ini_file.ini
-        echo "attributes = research" >> temp_ini_file.ini
+        python3 ~{python_script} \
+        ~{project} \
+        ~{study} \
+        ~{donor} \
+        ~{report_id} \
+        ~{assay} \
+        ~{tumor_id} \
+        ~{normal_id} \
+        ~{purple_zip} \
+        ~{msi_file} \
+        ~{ctdna_file} \
+        ~{hrd_path} \
+        ~{patient_study_id} \
+        ~{maf_path} \
+        ~{mavis_path} \
+        ~{arriba_path} \
+        ~{rsem_genes_results} \
+        ~{callability} \
+        ~{mean_coverage}
     >>>
 
     runtime {
+        modules: "~{modules}"
         memory: "~{jobMemory} GB"
         timeout: "~{timeout}"
     }
 
     output {
-        File ini_file = "temp_ini_file.ini"
+        File ini_file = "djerba_input.ini"
+    }
+}
+
+task createIntermediaries {
+    input {
+        String project
+        String donor
+        String patient_study_id
+        String tumor_id
+        String normal_id
+        String sample_name_tumor
+        String sample_name_normal
+        String sample_name_aux
+    }
+
+    parameter_meta {
+        project: "Project name"
+        donor: "Donor"
+        patient_study_id: "Patient identifier"
+        tumor_id: "Tumor sample identifier"
+        normal_id: "Matched normal sample identifier"
+        sample_name_tumor: "Sample name for the tumor WG sample"
+        sample_name_normal: "Sample name for the normal WG sample"
+        sample_name_aux: "Sample name for tumor transcriptome (WT)"
+    }
+
+    command <<<
+        cat <<EOF > sample_info.json
+            {
+            "project": "~{project}",
+            "donor": "~{donor}",
+            "patient_study_id": "~{patient_study_id}",
+            "tumour_id": "~{tumor_id}",
+            "normal_id": "~{normal_id}",
+            "sample_name_tumour": "~{sample_name_tumor}",
+            "sample_name_normal": "~{sample_name_normal}",
+            "sample_name_aux": "~{sample_name_aux}"
+            }
+        EOF
+
+        cat <<EOF > provenance_subset.tsv.gz
+        EOF
+    >>>
+
+    output {
+        File sample_info = "sample_info.json"
+        File provenance_subset = "provenance_subset.tsv.gz"
     }
 }
 
@@ -261,7 +362,9 @@ task runDjerba {
     input {
         String Prefix
         File ini_file
-        String modules = "djerba/1.8.4"
+        File sample_info
+        File provenance_subset
+        String modules = "djerba/1.9.2"
         Int timeout = 10
         Int jobMemory = 25
     }
@@ -269,6 +372,8 @@ task runDjerba {
     parameter_meta {
         Prefix: "Prefix for the output files"
         ini_file: "The INI input for Djerba"
+        sample_info: "Intermediate file with sample information"
+        provenance_subset: "Intermediate empty file required to run Djerba"
         jobMemory: "Memory in Gb for this job"
         timeout: "Timeout in hours"
         modules: "Name and version of module to be loaded"
@@ -276,6 +381,8 @@ task runDjerba {
 
     command <<<
         mkdir -p ~{Prefix}
+        mv ~{sample_info} ~{Prefix}
+        mv ~{provenance_subset} ~{Prefix}
 
         $DJERBA_ROOT/bin/djerba.py report \
             -i ~{ini_file} \
@@ -291,8 +398,8 @@ task runDjerba {
     }
 
     output {
-        File report_html = "~{Prefix}/~{Prefix}_report.research.html"
-        File report_pdf = "~{Prefix}/~{Prefix}_report.research.pdf"
-        File report_json = "~{Prefix}/~{Prefix}_report.json"
+        File report_html = "~{Prefix}/~{Prefix}-v1_report.research.html"
+        File report_pdf = "~{Prefix}/~{Prefix}-v1_report.research.pdf"
+        File report_json = "~{Prefix}/~{Prefix}-v1_report.json"
     }
 }
