@@ -83,80 +83,73 @@ Output | Type | Description | Labels
  
  * Running DjerbaReportGenerator
  
- DjerbaReportGenerator creates RUO Reports specifically and Clinical Reports generally from fpr queried metrics by generating intermediate INI files and running Djerba 1.8.4. 
+ DjerbaReportGenerator creates RUO Reports by generating intermediate INI files and running Djerba 1.9.2. 
  
  
  Retrieve callability from mutectcallability qc-etl cache
  
  ```
      LIMS_IDS="~{sep=" " LIMS_ID}"
-     python3 ~{python_script} $LIMS_IDS
+     python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
  ```
  
  Retrieve coverage_deduplicated from bamqc4merged qc-etl cache
  
  ```
      LIMS_IDS="~{sep=" " LIMS_ID}"
-     python3 ~{python_script} $LIMS_IDS
+     python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
  ```
  
  Create the intermediate INI file 
  
  ```
-     echo "[core]" > temp_ini_file.ini
-     echo "report_id = ~{report_id}" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[input_params_helper]" >> temp_ini_file.ini
-     echo "assay = WGTS" >> temp_ini_file.ini
-     echo "donor = ~{donor}" >> temp_ini_file.ini
-     echo "oncotree_code = NA" >> temp_ini_file.ini
-     echo "primary_cancer = NA" >> temp_ini_file.ini
-     echo "project = ~{project}" >> temp_ini_file.ini
-     echo "requisition_approved = 2025-01-01" >> temp_ini_file.ini
-     echo "requisition_id = NA" >> temp_ini_file.ini
-     echo "sample_type = NA" >> temp_ini_file.ini
-     echo "site_of_biopsy = NA" >> temp_ini_file.ini
-     echo "study = ~{study}" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[provenance_helper]" >> temp_ini_file.ini
-     echo "sample_name_tumour = ~{sample_name_tumor}" >> temp_ini_file.ini
-     echo "sample_name_normal = ~{sample_name_normal}" >> temp_ini_file.ini
-     echo "sample_name_aux = ~{sample_name_aux}" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[case_overview]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[sample]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "callability = ~{callability}" >> temp_ini_file.ini
-     echo "mean_coverage = ~{mean_coverage}" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[genomic_landscape]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[expression_helper]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[wgts.snv_indel]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[wgts.cnv_purple]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[fusion]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[gene_information_merger]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
-     echo "" >> temp_ini_file.ini
-     echo "[supplement.body]" >> temp_ini_file.ini
-     echo "attributes = research" >> temp_ini_file.ini
+     python3 ~{python_script} \
+         ~{project} \
+         ~{study} \
+         ~{donor} \
+         ~{report_id} \
+         ~{assay} \
+         ~{tumor_id} \
+         ~{normal_id} \
+         ~{purple_zip} \
+         ~{msi_file} \
+         ~{ctdna_file} \
+         ~{hrd_path} \
+         ~{patient_study_id} \
+         ~{maf_path} \
+         ~{mavis_path} \
+         ~{arriba_path} \
+         ~{rsem_genes_results} \
+         ~{callability} \
+         ~{mean_coverage}
  ```
  
- Run Djerba 1.8.4
+ Create sample_info.json and provenanve_subset.tsv.gz file
+ 
+ ```
+ cat <<EOF > sample_info.json
+         {
+         "project": "~{project}",
+         "donor": "~{donor}",
+         "patient_study_id": "~{patient_study_id}",
+         "tumour_id": "~{tumor_id}",
+         "normal_id": "~{normal_id}",
+         "sample_name_tumour": "~{sample_name_tumor}",
+         "sample_name_normal": "~{sample_name_normal}",
+         "sample_name_aux": "~{sample_name_aux}"
+         }
+     EOF
+ 
+ cat <<EOF > provenance_subset.tsv.gz
+ EOF
+ ```
+ 
+ Run Djerba 1.9.2
  
  ```
     mkdir -p ~{Prefix}
+    mv ~{sample_info} ~{Prefix}
+    mv ~{provenance_subset} ~{Prefix}
  
     $DJERBA_ROOT/bin/djerba.py report \
         -i ~{ini_file} \
