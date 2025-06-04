@@ -59,8 +59,8 @@ workflow DjerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
             {
-                name : "sqlite3/3.39.3",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_sqlite.yaml?ref_type=heads"
+                name : "gsi-qc-etl/1.36",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
                 name : "djerba/1.9.2",
@@ -159,7 +159,7 @@ task queryCallability {
         String python_script 
         String active_cache
         String archival_cache
-        String modules = "gsi-qc-etl/1.34"
+        String modules = "gsi-qc-etl/1.36"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -196,7 +196,7 @@ task queryCoverage {
         String python_script 
         String active_cache
         String archival_cache
-        String modules = "gsi-qc-etl/1.34"
+        String modules = "gsi-qc-etl/1.36"
         Int timeout = 5
         Int jobMemory = 12
     }
