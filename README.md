@@ -33,15 +33,8 @@ Parameter|Value|Description
 `sample_name_tumor`|String|Sample name for the tumour WG sample
 `sample_name_normal`|String|Sample name for the normal WG sample
 `sample_name_aux`|String|Sample name for tumor transcriptome (WT)
-`purple_zip`|File|Path to purple output
-`msi_file`|File|Path to msi output
-`ctdna_file`|File|Path to SNP counts
-`hrd_path`|File|Path to genomic signatures
+`report_files`|ReportInputFiles|Struct containing paths to input files required for Djerba report generation
 `patient_study_id`|String|Patient identifier
-`maf_path`|File|Path to mutect2 output
-`mavis_path`|File|Path to mavis output
-`arriba_path`|File|Path to gene fusion output
-`rsem_genes_results`|File|Path to rsem output
 `LIMS_ID`|Array[String]|Array of LIMS IDs
 
 
@@ -77,7 +70,6 @@ Output | Type | Description | Labels
 `reportJSON`|File|The RUO report in JSON file format|vidarr_label: reportJSON
 
 
-./commands.txt found, printing out the content...
 ## Commands
  This section lists command(s) run by DjerbaReportGenerator workflow
  
