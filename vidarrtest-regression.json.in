@@ -11,7 +11,7 @@
         "DjerbaReportGenerator.sample_name_tumor": "Test_01-01",
         "DjerbaReportGenerator.sample_name_normal": "Test_01-02",
         "DjerbaReportGenerator.sample_name_aux": "Test_01-03",
-        "DjerbaReportGenerator.report_files"{
+        "DjerbaReportGenerator.report_files": {
             "purple_zip": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.solPrimary.purple.zip","externalIds": [{"id": "Test01","provider": "Test01"}]}},
             "msi_file": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.filter.deduped.recalibrated.msi.booted","externalIds": [{"id": "Test01","provider": "Test01"}]}},
             "ctdna_file": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.SNP.count.txt","externalIds": [{"id": "Test01","provider": "Test01"}]}},
