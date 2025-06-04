@@ -7,7 +7,7 @@ Given metrics from file provenance, the workflow will create an intermediate INI
 ## Dependencies
 
 * [pandas 2.1.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads)
-* [sqlite3 3.39.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_sqlite.yaml?ref_type=heads)
+* [gsi-qc-etl 1.36](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads)
 * [djerba 1.9.2](https://github.com/oicr-gsi/djerba)
 
 
@@ -54,10 +54,10 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"gsi-qc-etl/1.34"|Name and version of module to be loaded
+`queryCallability.modules`|String|"gsi-qc-etl/1.36"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"gsi-qc-etl/1.34"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"gsi-qc-etl/1.36"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
 `createINI.modules`|String|"pandas/2.1.3"|Name and version of module to be loaded
