@@ -34,10 +34,13 @@
         "DjerbaReportGenerator.queryCoverage.jobMemory": null,
         "DjerbaReportGenerator.createINI.callability": null,
         "DjerbaReportGenerator.createINI.mean_coverage": null,
+        "DjerbaReportGenerator.createINI.modules": null,
         "DjerbaReportGenerator.createINI.timeout": null,
         "DjerbaReportGenerator.createINI.jobMemory": null,
         "DjerbaReportGenerator.runDjerba.Prefix": null,
         "DjerbaReportGenerator.runDjerba.ini_file": null,
+        "DjerbaReportGenerator.runDjerba.sample_info": null,
+        "DjerbaReportGenerator.runDjerba.provenance_subset": null,
         "DjerbaReportGenerator.runDjerba.modules": null,
         "DjerbaReportGenerator.runDjerba.timeout": null,
         "DjerbaReportGenerator.runDjerba.jobMemory": null
