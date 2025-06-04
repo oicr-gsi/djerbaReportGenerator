@@ -1,5 +1,16 @@
 version 1.0
 
+struct ReportInputFiles {
+    File purple_zip
+    File msi_file
+    File ctdna_file
+    File hrd_path
+    File maf_path
+    File mavis_path
+    File arriba_path
+    File rsem_genes_results
+}
+
 workflow DjerbaReportGenerator {
     input {
         String project
@@ -12,15 +23,8 @@ workflow DjerbaReportGenerator {
         String sample_name_tumor
         String sample_name_normal
         String sample_name_aux
-        File purple_zip
-        File msi_file
-        File ctdna_file
-        File hrd_path
+        ReportInputFiles report_files
         String patient_study_id
-        File maf_path
-        File mavis_path
-        File arriba_path
-        File rsem_genes_results
         Array[String] LIMS_ID
         String outputFileNamePrefix = donor  
     }
@@ -36,15 +40,8 @@ workflow DjerbaReportGenerator {
         sample_name_tumor: "Sample name for the tumour WG sample"
         sample_name_normal: "Sample name for the normal WG sample"
         sample_name_aux: "Sample name for tumor transcriptome (WT)"
-        purple_zip: "Path to purple output"
-        msi_file: "Path to msi output"
-        ctdna_file: "Path to SNP counts"
-        hrd_path: "Path to genomic signatures"
+        report_files: "Struct containing paths to input files required for Djerba report generation"
         patient_study_id: "Patient identifier"
-        maf_path: "Path to mutect2 output"
-        mavis_path: "Path to mavis output"
-        arriba_path: "Path to gene fusion output"
-        rsem_genes_results: "Path to rsem output"
         LIMS_ID: "Array of LIMS IDs"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
     }
@@ -108,15 +105,15 @@ workflow DjerbaReportGenerator {
             assay = assay,
             tumor_id = tumor_id,
             normal_id = normal_id,
-            purple_zip = purple_zip,
-            msi_file = msi_file,
-            ctdna_file = ctdna_file,
-            hrd_path = hrd_path,
+            purple_zip = report_files.purple_zip,
+            msi_file = report_files.msi_file,
+            ctdna_file = report_files.ctdna_file,
+            hrd_path = report_files.hrd_path,
             patient_study_id = patient_study_id,
-            maf_path = maf_path,
-            mavis_path = mavis_path,
-            arriba_path = arriba_path,
-            rsem_genes_results = rsem_genes_results,
+            maf_path = report_files.maf_path,
+            mavis_path = report_files.mavis_path,
+            arriba_path = report_files.arriba_path,
+            rsem_genes_results = report_files.rsem_genes_results,
             callability = queryCallability.callability,
             mean_coverage = queryCoverage.mean_coverage,
             python_script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/createIni.py"
