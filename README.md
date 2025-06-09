@@ -1,6 +1,6 @@
 # DjerbaReportGenerator
 
-Given metrics from file provenance, the workflow will create an intermediate INI file and run djerba to generate RUO reports.
+Given metrics, the workflow will create an intermediate INI file and run djerba to generate RUO reports.
 
 ## Overview
 
