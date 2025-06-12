@@ -199,7 +199,7 @@ task queryCoverage {
     }
 
     parameter_meta {
-        LIMS_ID: "The LIMS Identifiers that will be used to query the cache"
+        LimsId: "The LIMS Identifiers that will be used to query the cache"
         pythonScript: "Path to the Python script that queries the SQLite database"
         activeCache: "Path to the qc etl cache for active projects"
         archivalCache: "Path to the qc etl cache for all active and inactive projects"
@@ -210,7 +210,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        python3 ~{pythonScript} --lims-id $LIMS_IDS --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+        python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
     >>>
 
     runtime {
