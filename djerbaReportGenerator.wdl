@@ -52,6 +52,10 @@ workflow djerbaReportGenerator {
         description: "Given metrics, the workflow will create an intermediate INI file and run djerba to generate RUO reports."
         dependencies: [
             {
+                name: "djerbareporter/1.0.0",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads"
+            },
+            {
                 name : "pandas/2.1.3",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
@@ -327,12 +331,12 @@ task createIntermediaries {
             {
             "project": "~{project}",
             "donor": "~{donor}",
-            "patientStudyId": "~{patientStudyId}",
-            "tumourId": "~{tumorId}",
-            "normalId": "~{normalId}",
-            "sampleNameTumour": "~{sampleNameTumor}",
-            "sampleNameNormal": "~{sampleNameNormal}",
-            "sampleNameAux": "~{sampleNameAux}"
+            "patient_study_id": "~{patientStudyId}",
+            "tumour_id": "~{tumorId}",
+            "normal_id": "~{normalId}",
+            "sample_name_tumour": "~{sampleNameTumor}",
+            "sample_name_normal": "~{sampleNameNormal}",
+            "sample_name_aux": "~{sampleNameAux}"
             }
         EOF
 
