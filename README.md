@@ -1,4 +1,4 @@
-# DjerbaReportGenerator
+# djerbaReportGenerator
 
 Given metrics, the workflow will create an intermediate INI file and run djerba to generate RUO reports.
 
@@ -6,6 +6,7 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 
 ## Dependencies
 
+* [djerbareporter 1.0.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads)
 * [pandas 2.1.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads)
 * [gsi-qc-etl 1.36](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads)
 * [djerba 1.9.2](https://github.com/oicr-gsi/djerba)
@@ -15,7 +16,7 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 
 ### Cromwell
 ```
-java -jar cromwell.jar run DjerbaReportGenerator.wdl --inputs inputs.json
+java -jar cromwell.jar run djerbaReportGenerator.wdl --inputs inputs.json
 ```
 
 ### Inputs
@@ -26,16 +27,16 @@ Parameter|Value|Description
 `project`|String|Project name
 `study`|String|Study
 `donor`|String|Donor
-`report_id`|String|Report identifier
+`reportId`|String|Report identifier
 `assay`|String|Assay name
-`tumor_id`|String|Tumor sample identifier
-`normal_id`|String|Matched normal sample identifier
-`sample_name_tumor`|String|Sample name for the tumour WG sample
-`sample_name_normal`|String|Sample name for the normal WG sample
-`sample_name_aux`|String|Sample name for tumor transcriptome (WT)
-`report_files`|ReportInputFiles|Struct containing paths to input files required for Djerba report generation
-`patient_study_id`|String|Patient identifier
-`LIMS_ID`|Array[String]|Array of LIMS IDs
+`tumorId`|String|Tumor sample identifier
+`normalId`|String|Matched normal sample identifier
+`sampleNameTumor`|String|Sample name for the tumour WG sample
+`sampleNameNormal`|String|Sample name for the normal WG sample
+`sampleNameAux`|String|Sample name for tumor transcriptome (WT)
+`reportFiles`|ReportInputFiles|Struct containing paths to input files required for Djerba report generation
+`patientStudyId`|String|Patient identifier
+`LimsId`|Array[String]|Array of LIMS IDs
 
 
 #### Optional workflow parameters:
@@ -47,13 +48,13 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"gsi-qc-etl/1.36"|Name and version of module to be loaded
+`queryCallability.modules`|String|"gsi-qc-etl/1.36 djerbareporter/1.0.0"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"gsi-qc-etl/1.36"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"gsi-qc-etl/1.36 djerbareporter/1.0.0"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
-`createINI.modules`|String|"pandas/2.1.3"|Name and version of module to be loaded
+`createINI.modules`|String|"pandas/2.1.3 djerbareporter/1.0.0"|Name and version of module to be loaded
 `createINI.timeout`|Int|4|Timeout in hours
 `createINI.jobMemory`|Int|2|Memory in Gb for this job
 `runDjerba.modules`|String|"djerba/1.9.2"|Name and version of module to be loaded
@@ -70,50 +71,51 @@ Output | Type | Description | Labels
 `reportJSON`|File|The RUO report in JSON file format|vidarr_label: reportJSON
 
 
+anallan/repositories/djerbaReportGenerator/commands.txt found, printing out the content...
 ## Commands
- This section lists command(s) run by DjerbaReportGenerator workflow
+ This section lists command(s) run by djerbaReportGenerator workflow
  
- * Running DjerbaReportGenerator
+ * Running djerbaReportGenerator
  
- DjerbaReportGenerator creates RUO Reports by generating intermediate INI files and running Djerba 1.9.2. 
+ djerbaReportGenerator creates RUO Reports by generating intermediate INI files and running Djerba 1.9.2. 
  
  
  Retrieve callability from mutectcallability qc-etl cache
  
  ```
-     LIMS_IDS="~{sep=" " LIMS_ID}"
-     python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
+     LimsId="~{sep=" " LimsId}"
+     callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
  ```
  
  Retrieve coverage_deduplicated from bamqc4merged qc-etl cache
  
  ```
-     LIMS_IDS="~{sep=" " LIMS_ID}"
-     python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
+     LimsId="~{sep=" " LimsId}"
+     covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
  ```
  
  Create the intermediate INI file 
  
  ```
-     python3 ~{python_script} \
+     createIni \
          ~{project} \
          ~{study} \
          ~{donor} \
-         ~{report_id} \
+         ~{reportId} \
          ~{assay} \
-         ~{tumor_id} \
-         ~{normal_id} \
-         ~{purple_zip} \
-         ~{msi_file} \
-         ~{ctdna_file} \
-         ~{hrd_path} \
-         ~{patient_study_id} \
-         ~{maf_path} \
-         ~{mavis_path} \
-         ~{arriba_path} \
-         ~{rsem_genes_results} \
+         ~{tumorId} \
+         ~{normalId} \
+         ~{purpleZip} \
+         ~{msiFile} \
+         ~{ctdnaFile} \
+         ~{hrdPath} \
+         ~{patientStudyId} \
+         ~{mafPath} \
+         ~{mavisPath} \
+         ~{arribaPath} \
+         ~{rsemGenesResults} \
          ~{callability} \
-         ~{mean_coverage}
+         ~{meanCoverage}
  ```
  
  Create sample_info.json and provenanve_subset.tsv.gz file
@@ -123,12 +125,12 @@ Output | Type | Description | Labels
          {
          "project": "~{project}",
          "donor": "~{donor}",
-         "patient_study_id": "~{patient_study_id}",
-         "tumour_id": "~{tumor_id}",
-         "normal_id": "~{normal_id}",
-         "sample_name_tumour": "~{sample_name_tumor}",
-         "sample_name_normal": "~{sample_name_normal}",
-         "sample_name_aux": "~{sample_name_aux}"
+         "patientStudyId": "~{patientStudyId}",
+         "tumourId": "~{tumorId}",
+         "normalId": "~{normalId}",
+         "sampleNameTumour": "~{sampleNameTumor}",
+         "sampleNameNormal": "~{sampleNameNormal}",
+         "sampleNameAux": "~{sampleNameAux}"
          }
      EOF
  
@@ -140,11 +142,11 @@ Output | Type | Description | Labels
  
  ```
     mkdir -p ~{Prefix}
-    mv ~{sample_info} ~{Prefix}
-    mv ~{provenance_subset} ~{Prefix}
+    mv ~{sampleInfo} ~{Prefix}
+    mv ~{provenanceSubset} ~{Prefix}
  
     $DJERBA_ROOT/bin/djerba.py report \
-        -i ~{ini_file} \
+        -i ~{iniFile} \
         -o ~{Prefix} \
         --pdf \
         --no-archive
