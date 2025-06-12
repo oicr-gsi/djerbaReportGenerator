@@ -83,7 +83,6 @@ workflow djerbaReportGenerator {
     call queryCallability {
         input:
             LimsId = LimsId,
-            pythonScript = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/callSearch.py",
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
             archivalCache = "/scratch2/groups/gsi/production/qcetl_archival"
     }
@@ -91,7 +90,6 @@ workflow djerbaReportGenerator {
     call queryCoverage {
         input:
             LimsId = LimsId,
-            pythonScript = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/covSearch.py",
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
             archivalCache = "/scratch2/groups/gsi/production/qcetl_archival"
     }
@@ -116,7 +114,6 @@ workflow djerbaReportGenerator {
             rsemGenesResults = reportFiles.rsemGenesResults,
             callability = queryCallability.callability,
             meanCoverage = queryCoverage.meanCoverage,
-            pythonScript = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/DjerbaReportGenerator/scripts/createIni.py"
     }
 
     call createIntermediaries {
@@ -153,17 +150,15 @@ workflow djerbaReportGenerator {
 task queryCallability {
     input {
         Array[String] LimsId
-        String pythonScript 
         String activeCache
         String archivalCache
-        String modules = "gsi-qc-etl/1.36"
+        String modules = "gsi-qc-etl/1.36 djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
 
     parameter_meta {
         LimsId: "The LIMS Identifiers that will be used to query the cache"
-        pythonScript: "Path to the Python script that queries the SQLite database"
         activeCache: "Path to the qc etl cache for active projects"
         archivalCache: "Path to the qc etl cache for all active and inactive projects"
         modules: "Name and version of module to be loaded"
@@ -173,7 +168,7 @@ task queryCallability {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+        callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
     >>>
 
     runtime {
@@ -190,17 +185,15 @@ task queryCallability {
 task queryCoverage {
     input {
         Array[String] LimsId
-        String pythonScript 
         String activeCache
         String archivalCache
-        String modules = "gsi-qc-etl/1.36"
+        String modules = "gsi-qc-etl/1.36 djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
 
     parameter_meta {
         LimsId: "The LIMS Identifiers that will be used to query the cache"
-        pythonScript: "Path to the Python script that queries the SQLite database"
         activeCache: "Path to the qc etl cache for active projects"
         archivalCache: "Path to the qc etl cache for all active and inactive projects"
         modules: "Name and version of module to be loaded"
@@ -210,7 +203,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
     >>>
 
     runtime {
@@ -244,8 +237,7 @@ task createINI {
         String rsemGenesResults
         String callability
         String meanCoverage
-        String pythonScript
-        String modules = "pandas/2.1.3"
+        String modules = "pandas/2.1.3 djerbareporter/1.0.0"
         Int timeout = 4
         Int jobMemory = 2
     }
@@ -269,14 +261,13 @@ task createINI {
         rsemGenesResults: "Path to rsem output"
         callability: "Callability value from queryCallability task"
         meanCoverage: "Mean coverage value from queryCoverage task"
-        pythonScript: "Path to the Python script that creates the INI file"
         modules: "Name and version of module to be loaded"
         jobMemory: "Memory in Gb for this job"
         timeout: "Timeout in hours"
     }
 
     command <<<
-        python3 ~{pythonScript} \
+        createIni \
         ~{project} \
         ~{study} \
         ~{donor} \

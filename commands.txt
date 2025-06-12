@@ -10,20 +10,20 @@ Retrieve callability from mutectcallability qc-etl cache
 
 ```
     LimsId="~{sep=" " LimsId}"
-    python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+    callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
 ```
 
 Retrieve coverage_deduplicated from bamqc4merged qc-etl cache
 
 ```
     LimsId="~{sep=" " LimsId}"
-    python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+    covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
 ```
 
 Create the intermediate INI file 
 
 ```
-    python3 ~{pythonScript} \
+    createIni \
         ~{project} \
         ~{study} \
         ~{donor} \
