@@ -1,47 +1,47 @@
 ## Commands
-This section lists command(s) run by DjerbaReportGenerator workflow
+This section lists command(s) run by djerbaReportGenerator workflow
 
-* Running DjerbaReportGenerator
+* Running djerbaReportGenerator
 
-DjerbaReportGenerator creates RUO Reports by generating intermediate INI files and running Djerba 1.9.2. 
+djerbaReportGenerator creates RUO Reports by generating intermediate INI files and running Djerba 1.9.2. 
 
 
 Retrieve callability from mutectcallability qc-etl cache
 
 ```
-    LIMS_IDS="~{sep=" " LIMS_ID}"
-    python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
+    LimsId="~{sep=" " LimsId}"
+    python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
 ```
 
 Retrieve coverage_deduplicated from bamqc4merged qc-etl cache
 
 ```
-    LIMS_IDS="~{sep=" " LIMS_ID}"
-    python3 ~{python_script} --lims-id $LIMS_IDS --gsiqcetl-dir ~{active_cache} --gsiqcetl-dir ~{archival_cache}
+    LimsId="~{sep=" " LimsId}"
+    python3 ~{pythonScript} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
 ```
 
 Create the intermediate INI file 
 
 ```
-    python3 ~{python_script} \
+    python3 ~{pythonScript} \
         ~{project} \
         ~{study} \
         ~{donor} \
-        ~{report_id} \
+        ~{reportId} \
         ~{assay} \
-        ~{tumor_id} \
-        ~{normal_id} \
-        ~{purple_zip} \
-        ~{msi_file} \
-        ~{ctdna_file} \
-        ~{hrd_path} \
-        ~{patient_study_id} \
-        ~{maf_path} \
-        ~{mavis_path} \
-        ~{arriba_path} \
-        ~{rsem_genes_results} \
+        ~{tumorId} \
+        ~{normalId} \
+        ~{purpleZip} \
+        ~{msiFile} \
+        ~{ctdnaFile} \
+        ~{hrdPath} \
+        ~{patientStudyId} \
+        ~{mafPath} \
+        ~{mavisPath} \
+        ~{arribaPath} \
+        ~{rsemGenesResults} \
         ~{callability} \
-        ~{mean_coverage}
+        ~{meanCoverage}
 ```
 
 Create sample_info.json and provenanve_subset.tsv.gz file
@@ -51,12 +51,12 @@ cat <<EOF > sample_info.json
         {
         "project": "~{project}",
         "donor": "~{donor}",
-        "patient_study_id": "~{patient_study_id}",
-        "tumour_id": "~{tumor_id}",
-        "normal_id": "~{normal_id}",
-        "sample_name_tumour": "~{sample_name_tumor}",
-        "sample_name_normal": "~{sample_name_normal}",
-        "sample_name_aux": "~{sample_name_aux}"
+        "patientStudyId": "~{patientStudyId}",
+        "tumourId": "~{tumorId}",
+        "normalId": "~{normalId}",
+        "sampleNameTumour": "~{sampleNameTumor}",
+        "sampleNameNormal": "~{sampleNameNormal}",
+        "sampleNameAux": "~{sampleNameAux}"
         }
     EOF
 
@@ -68,11 +68,11 @@ Run Djerba 1.9.2
 
 ```
    mkdir -p ~{Prefix}
-   mv ~{sample_info} ~{Prefix}
-   mv ~{provenance_subset} ~{Prefix}
+   mv ~{sampleInfo} ~{Prefix}
+   mv ~{provenanceSubset} ~{Prefix}
 
    $DJERBA_ROOT/bin/djerba.py report \
-       -i ~{ini_file} \
+       -i ~{iniFile} \
        -o ~{Prefix} \
        --pdf \
        --no-archive
