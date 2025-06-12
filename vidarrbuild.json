@@ -1,6 +1,6 @@
 {
 	"names":[
-		"DjerbaReportGenerator"
+		"djerbaReportGenerator"
 	],
-	"wdl": "DjerbaReportGenerator.wdl"
+	"wdl": "djerbaReportGenerator.wdl"
 }
