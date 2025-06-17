@@ -78,8 +78,13 @@ def _get_coverage(cache: pd.DataFrame, lims_ids: list[str]):
     if filtered.empty:
         logging.warning("No matching LIMS IDs found in the cache.")
         return pd.DataFrame()
+    
+    tumor = filtered[filtered['Tissue Type'] != 'R']
+    if tumor.empty:
+        logging.warning("No tumor samples found in the filtered cache.")
+        return pd.DataFrame()
     else:
-        coverage = filtered['coverage deduplicated'].drop_duplicates()
+        coverage = tumor['coverage deduplicated'].drop_duplicates()
 
     return coverage
 
