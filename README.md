@@ -48,13 +48,13 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"gsi-qc-etl/1.36 djerbareporter/1.0.0"|Name and version of module to be loaded
+`queryCallability.modules`|String|"djerbareporter/1.0.0 gsi-qc-etl/1.36"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"gsi-qc-etl/1.36 djerbareporter/1.0.0"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"djerbareporter/1.0.0 gsi-qc-etl/1.36"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
-`createINI.modules`|String|"pandas/2.1.3 djerbareporter/1.0.0"|Name and version of module to be loaded
+`createINI.modules`|String|"djerbareporter/1.0.0 pandas/2.1.3"|Name and version of module to be loaded
 `createINI.timeout`|Int|4|Timeout in hours
 `createINI.jobMemory`|Int|2|Memory in Gb for this job
 `runDjerba.modules`|String|"djerba/1.9.2"|Name and version of module to be loaded
@@ -98,24 +98,24 @@ anallan/repositories/djerbaReportGenerator/commands.txt found, printing out the 
  
  ```
      createIni \
-         ~{project} \
-         ~{study} \
-         ~{donor} \
-         ~{reportId} \
-         ~{assay} \
-         ~{tumorId} \
-         ~{normalId} \
-         ~{purpleZip} \
-         ~{msiFile} \
-         ~{ctdnaFile} \
-         ~{hrdPath} \
-         ~{patientStudyId} \
-         ~{mafPath} \
-         ~{mavisPath} \
-         ~{arribaPath} \
-         ~{rsemGenesResults} \
-         ~{callability} \
-         ~{meanCoverage}
+         "~{project}" \
+         "~{study}" \
+         "~{donor}" \
+         "~{reportId}" \
+         "~{assay}" \
+         "~{tumorId}" \
+         "~{normalId}" \
+         "~{purpleZip}" \
+         "~{msiFile}" \
+         "~{ctdnaFile}" \
+         "~{hrdPath}" \
+         "~{patientStudyId}" \
+         "~{mafPath}" \
+         "~{mavisPath}" \
+         "~{arribaPath}" \
+         "~{rsemGenesResults}" \
+         "~{callability}" \
+         "~{meanCoverage}"
  ```
  
  Create sample_info.json and provenanve_subset.tsv.gz file

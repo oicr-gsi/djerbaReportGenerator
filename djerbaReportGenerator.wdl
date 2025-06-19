@@ -156,7 +156,7 @@ task queryCallability {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "gsi-qc-etl/1.36 djerbareporter/1.0.0"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.36"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -191,7 +191,7 @@ task queryCoverage {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "gsi-qc-etl/1.36 djerbareporter/1.0.0"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.36"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -241,7 +241,7 @@ task createINI {
         String rsemGenesResults
         String callability
         String meanCoverage
-        String modules = "pandas/2.1.3 djerbareporter/1.0.0"
+        String modules = "djerbareporter/1.0.0 pandas/2.1.3"
         Int timeout = 4
         Int jobMemory = 2
     }
@@ -272,24 +272,24 @@ task createINI {
 
     command <<<
         createIni \
-        ~{project} \
-        ~{study} \
-        ~{donor} \
-        ~{reportId} \
-        ~{assay} \
-        ~{tumorId} \
-        ~{normalId} \
-        ~{purpleZip} \
-        ~{msiFile} \
-        ~{ctdnaFile} \
-        ~{hrdPath} \
-        ~{patientStudyId} \
-        ~{mafPath} \
-        ~{mavisPath} \
-        ~{arribaPath} \
-        ~{rsemGenesResults} \
-        ~{callability} \
-        ~{meanCoverage}
+        "~{project}" \
+        "~{study}" \
+        "~{donor}" \
+        "~{reportId}" \
+        "~{assay}" \
+        "~{tumorId}" \
+        "~{normalId}" \
+        "~{purpleZip}" \
+        "~{msiFile}" \
+        "~{ctdnaFile}" \
+        "~{hrdPath}" \
+        "~{patientStudyId}" \
+        "~{mafPath}" \
+        "~{mavisPath}" \
+        "~{arribaPath}" \
+        "~{rsemGenesResults}" \
+        "~{callability}" \
+        "~{meanCoverage}"
     >>>
 
     runtime {

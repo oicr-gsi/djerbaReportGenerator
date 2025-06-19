@@ -24,24 +24,24 @@ Create the intermediate INI file
 
 ```
     createIni \
-        ~{project} \
-        ~{study} \
-        ~{donor} \
-        ~{reportId} \
-        ~{assay} \
-        ~{tumorId} \
-        ~{normalId} \
-        ~{purpleZip} \
-        ~{msiFile} \
-        ~{ctdnaFile} \
-        ~{hrdPath} \
-        ~{patientStudyId} \
-        ~{mafPath} \
-        ~{mavisPath} \
-        ~{arribaPath} \
-        ~{rsemGenesResults} \
-        ~{callability} \
-        ~{meanCoverage}
+        "~{project}" \
+        "~{study}" \
+        "~{donor}" \
+        "~{reportId}" \
+        "~{assay}" \
+        "~{tumorId}" \
+        "~{normalId}" \
+        "~{purpleZip}" \
+        "~{msiFile}" \
+        "~{ctdnaFile}" \
+        "~{hrdPath}" \
+        "~{patientStudyId}" \
+        "~{mafPath}" \
+        "~{mavisPath}" \
+        "~{arribaPath}" \
+        "~{rsemGenesResults}" \
+        "~{callability}" \
+        "~{meanCoverage}"
 ```
 
 Create sample_info.json and provenanve_subset.tsv.gz file
