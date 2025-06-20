@@ -88,7 +88,7 @@ def createINI(args):
             config[section] = {
                 "attributes": "research",
                 "callability": args.callability,
-                "mean_coverage": args.mean_coverage,
+                "mean_coverage": f"{args.mean_coverage}x",
                 "oncotree_code": "NA",
                 "sample_type": "NA",
                 "donor": args.donor,

@@ -88,14 +88,14 @@ workflow djerbaReportGenerator {
         input:
             LimsId = LimsId,
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
-            archivalCache = "/scratch2/groups/gsi/production/qcetl_archival"
+            archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro"
     }
 
     call queryCoverage {
         input:
             LimsId = LimsId,
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
-            archivalCache = "/scratch2/groups/gsi/production/qcetl_archival"
+            archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro"
     }
 
     call createINI {

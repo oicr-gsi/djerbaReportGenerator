@@ -79,7 +79,8 @@ def _get_callability(cache: pd.DataFrame, lims_ids: list[str]):
         logging.warning("No matching LIMS IDs found in the cache.")
         return pd.DataFrame()
     else:
-        call = filtered['callability'].drop_duplicates()
+        call = filtered['callability'].drop_duplicates() * 100
+        call = call.round(2)
 
     return call
 

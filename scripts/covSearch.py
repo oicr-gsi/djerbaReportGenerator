@@ -85,6 +85,7 @@ def _get_coverage(cache: pd.DataFrame, lims_ids: list[str]):
         return pd.DataFrame()
     else:
         coverage = tumor['coverage deduplicated'].drop_duplicates()
+        coverage = coverage.round(2)
 
     return coverage
 
