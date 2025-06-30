@@ -144,6 +144,7 @@ anallan/repositories/djerbaReportGenerator/commands.txt found, printing out the 
     mkdir -p ~{Prefix}
     mv ~{sampleInfo} ~{Prefix}
     mv ~{provenanceSubset} ~{Prefix}
+    export DJERBA_PRIVATE_DIR=/.mounts/labs/gsiprojects/gsi/CGI/resources
  
     $DJERBA_ROOT/bin/djerba.py report \
         -i ~{iniFile} \
