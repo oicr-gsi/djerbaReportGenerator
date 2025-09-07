@@ -18,12 +18,20 @@ parser.add_argument("--lims-id",
                     nargs="+", 
                     help="List of LIMS IDs to search for.")
 
+parser.add_argument("--assay",
+                    type=str,
+                    required=True,
+                    help="Assay type, e.g., TAR or WGTS.")
+
 # Parse the arguments
 args = parser.parse_args()
 
 # Access parsed arguments
 gsiqcetl_dirs = args.gsiqcetl_dir
 lims_ids = args.lims_id
+assay = args.assay
+
+coverage_column = "coverage deduplicated" if assay == "WGTS" else "coverage"
 
 # Load QC caches
 etl_caches = QCETLMultiCache(gsiqcetl_dirs)
@@ -54,7 +62,7 @@ def _load_cache(etl_caches, cache_version: str, cache_name: str, id_column, merg
             logging.exception(f'Error loading cache: {cache_version}.{cache_name}')
             return pd.DataFrame()
 
-def _get_coverage(cache: pd.DataFrame, lims_ids: list[str]):
+def _get_coverage(cache: pd.DataFrame, lims_ids: list[str], coverage_column: str):
     '''
     Filters the cache to return rows matching the given LIMS IDs and returns the
     relevant coverage deduplicated values.
@@ -84,7 +92,7 @@ def _get_coverage(cache: pd.DataFrame, lims_ids: list[str]):
         logging.warning("No tumor samples found in the filtered cache.")
         return pd.DataFrame()
     else:
-        coverage = tumor['coverage deduplicated'].drop_duplicates()
+        coverage = tumor[coverage_column].drop_duplicates()
         coverage = coverage.round(2)
 
     return coverage
@@ -92,7 +100,7 @@ def _get_coverage(cache: pd.DataFrame, lims_ids: list[str]):
 bamqc4merged = _load_cache(etl_caches, 'bamqc4merged', 'bamqc4merged',
             bamqc4merged_columns.MergedPineryLimsID, True)
 
-coverage = _get_coverage(bamqc4merged, lims_ids)
+coverage = _get_coverage(bamqc4merged, lims_ids, coverage_column)
 if not coverage.empty:
     with open("coverage.txt", "w") as f:
         f.write("\n".join(coverage.astype(str)))
