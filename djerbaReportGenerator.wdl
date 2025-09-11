@@ -85,11 +85,11 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
             {
-                name : "gsi-qc-etl/1.36",
+                name : "gsi-qc-etl/1.38",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
-                name : "djerba/1.11.1",
+                name : "djerba/1.10.2",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -136,7 +136,7 @@ workflow djerbaReportGenerator {
             tumorId = tumorId,
             normalId = normalId,
             patientStudyId = patientStudyId,
-            meanCoverage = queryCoverage.meanCoverage,
+            meanCoverage = sub(queryCoverage.meanCoverage, "\\..*", ""),
             attributes = attributes,
             # WGTS inputs
             purpleZip = if assay == "WGTS" then select_first([purpleZip, ""]) else "",
@@ -176,10 +176,11 @@ workflow djerbaReportGenerator {
 
     call runDjerba {
         input:
+            assay = assay,
             Prefix = outputFileNamePrefix,
             iniFile = createINI.iniFile,
-            sampleInfo = select_first([createIntermediaries.sampleInfo, "empty_sample_info.json"]),
-            provenanceSubset = select_first([createIntermediaries.provenanceSubset, "empty_provenance_subset.tsv.gz"])
+            sampleInfo = createIntermediaries.sampleInfo,
+            provenanceSubset = createIntermediaries.provenanceSubset
     }
 
     output {
@@ -192,7 +193,7 @@ task queryCallability {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.36"
+        String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -228,7 +229,7 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.36"
+        String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -271,7 +272,7 @@ task createINI {
         String patientStudyId
         String meanCoverage
         String attributes
-        String modules = "djerbareporter/1.0.0 pandas/2.1.3"
+        String modules = "djerbareporter/1.0.0"
         Int timeout = 4
         Int jobMemory = 2
 
@@ -344,16 +345,16 @@ task createINI {
                 "~{normalId}" \
                 "~{patientStudyId}" \
                 "~{meanCoverage}" \
-                "~{attributes}" \
-                "~{purpleZip}" \
-                "~{msiFile}" \
-                "~{ctdnaFile}" \
-                "~{hrdPath}" \
-                "~{mafPath}" \
-                "~{mavisPath}" \
-                "~{arribaPath}" \
-                "~{rsemGenesResults}" \
-                "~{callability}"
+                --attributes "~{attributes}" \
+                --purple_zip "~{purpleZip}" \
+                --msi_file "~{msiFile}" \
+                --ctdna_file "~{ctdnaFile}" \
+                --hrd_path "~{hrdPath}" \
+                --maf_path "~{mafPath}" \
+                --mavis_path "~{mavisPath}" \
+                --arriba_path "~{arribaPath}" \
+                --rsem_genes_results "~{rsemGenesResults}" \
+                --callability "~{callability}"
         else
             createIni \
                 "~{project}" \
@@ -365,16 +366,16 @@ task createINI {
                 "~{normalId}" \
                 "~{patientStudyId}" \
                 "~{meanCoverage}" \
-                "~{attributes}" \
-                "~{cbioId}" \
-                "~{ichorcnaFile}" \
-                "~{consensuscruncherFile}" \
-                "~{consensuscruncherFileNormal}" \
-                "~{mafFile}" \
-                "~{mafFileNormal}" \
-                "~{segFile}" \
-                "~{plotsFile}" \
-                "~{groupId}"
+                --attributes "~{attributes}" \
+                --cbioId "~{cbioId}" \
+                --ichorcna_file "~{ichorcnaFile}" \
+                --consensuscruncher_file "~{consensuscruncherFile}" \
+                --consensuscruncher_file_normal "~{consensuscruncherFileNormal}" \
+                --maf_file "~{mafFile}" \
+                --maf_file_normal "~{mafFileNormal}" \
+                --seg_file "~{segFile}" \
+                --plots_file "~{plotsFile}" \
+                --group_id "~{groupId}" 
         fi
     >>>
 
@@ -439,16 +440,18 @@ task createIntermediaries {
 task runDjerba {
     input {
         String Prefix
+        String assay
         File iniFile
-        File sampleInfo
-        File provenanceSubset
-        String modules = "djerba/1.11.1"
+        File? sampleInfo
+        File? provenanceSubset
+        String modules = "djerba/1.10.2"
         Int timeout = 10
         Int jobMemory = 25
     }
 
     parameter_meta {
         Prefix: "Prefix for the output files"
+        assay: "Name of assay"
         iniFile: "The INI input for Djerba"
         sampleInfo: "Intermediate file with sample information"
         provenanceSubset: "Intermediate empty file required to run Djerba"
@@ -459,10 +462,13 @@ task runDjerba {
 
     command <<<
         mkdir -p ~{Prefix}
-        mv ~{sampleInfo} ~{Prefix}
-        mv ~{provenanceSubset} ~{Prefix}
 
-        export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
+        if [[ "~{assay}" == "WGTS" ]]; then
+            mv ~{sampleInfo} ~{Prefix}
+            mv ~{provenanceSubset} ~{Prefix}
+        fi
+
+        #export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
         
         $DJERBA_ROOT/bin/djerba.py report \
             -i ~{iniFile} \
