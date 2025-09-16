@@ -121,8 +121,7 @@ workflow djerbaReportGenerator {
             LimsId = LimsId,
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
             archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro",
-            assay = assay,
-            script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/djerbaReportGenerator/scripts/covSearch.py"
+            assay = assay
     }
 
     String create_ini_args =
@@ -144,8 +143,7 @@ workflow djerbaReportGenerator {
             patientStudyId = patientStudyId,
             meanCoverage = queryCoverage.meanCoverage,
             attributes = attributes,
-            createArgs = create_ini_args,
-            script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/djerbaReportGenerator/scripts/createINI.py"
+            createArgs = create_ini_args
     }
 
     if (assay == "WGTS") {
@@ -217,7 +215,6 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
-        String script
         String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
@@ -235,7 +232,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        python3 ~{script} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
     >>>
 
     runtime {
@@ -261,7 +258,6 @@ task createINI {
         String meanCoverage
         String attributes
         String createArgs 
-        String script
         String modules = "djerbareporter/1.0.0"
         Int timeout = 4
         Int jobMemory = 2
@@ -276,7 +272,6 @@ task createINI {
         attributes: "research or clinical"
         patientStudyId: "Patient identifier"
         createArgs: "Arguments to pass to the script"
-        script: "Path to the createIni.py script"
         meanCoverage: "Mean coverage value from queryCoverage task"
         modules: "Name and version of module to be loaded"
         jobMemory: "Memory in Gb for this job"
@@ -284,7 +279,7 @@ task createINI {
     }
 
     command <<<
-        python3 ~{script} \
+        createINI \
             "~{project}" \
             "~{study}" \
             "~{donor}" \

@@ -215,7 +215,6 @@
         "djerbaReportGenerator.queryCoverage.modules": null,
         "djerbaReportGenerator.queryCoverage.timeout": null,
         "djerbaReportGenerator.queryCoverage.jobMemory": null,
-        "djerbaReportGenerator.createINI.callability": null,
         "djerbaReportGenerator.createINI.meanCoverage": null,
         "djerbaReportGenerator.createINI.modules": null,
         "djerbaReportGenerator.createINI.timeout": null,
