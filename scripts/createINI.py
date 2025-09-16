@@ -2,6 +2,10 @@ import argparse
 import configparser
 import os
 import sys
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 
 def createINI(args):
     config = configparser.ConfigParser(allow_no_value=True)
@@ -37,8 +41,19 @@ def createINI(args):
             "gene_information_merger",       
             "supplement.body",
         ]
+    elif assay == "PWGS":
+        sections = [
+            "report_title",
+            "core",
+            "patient_info",
+            "pwgs.case_overview",
+            "pwgs.summary",
+            "pwgs.sample",
+            "pwgs.analysis",
+            "supplement.body",
+        ]
     else:
-        print(f"Unsupported assay type: {assay}")
+        logging.warning(f"Unsupported assay type: {assay}")
         sys.exit(1)
 
     for section in sections:
@@ -123,12 +138,24 @@ def createINI(args):
                 "report_id": args.report_id,
                 "requisition_approved": "2025-01-01"
             }
+        
+        elif section == "pwgs.case_overview":
+            config[section] = {
+                "primary_cancer": "Required",
+                "requisition_approved": "2025-01-01",
+                "study": args.study,
+                "wgs_report_id": args.wgs_report_id,
+                "attributes": args.attributes,
+                "donor": args.donor, 
+                "group_id": args.group_id,
+                "patient_study_id": args.patient_study_id
+            }
 
         elif section == "sample":
             config[section] = {
                 "attributes": args.attributes,
                 "callability": args.callability,
-                "mean_coverage": f"{args.mean_coverage}x",
+                "mean_coverage": args.mean_coverage,
                 "oncotree_code": "NA",
                 "sample_type": "NA",
                 "donor": args.donor,
@@ -184,7 +211,17 @@ def createINI(args):
             config[section] = {"attributes": args.attributes}
 
         elif section == "patient_info":
-            config[section] = {"attributes": args.attributes}
+            config[section] = {
+                "attributes": args.attributes,
+                "patient_name": "LAST, FIRST",
+                "patient_dob": "YYYY-MM-DD",
+                "patient_genetic_sex": "SEX",
+                "requisitioner_email": "NAME@domain.com",
+                "physician_licence_number": "nnnnnnnn",
+                "physician_name": "LAST, FIRST",
+                "physician_phone_number": "nnn-nnn-nnnn",
+                "hospital_name_and_address": "HOSPITAL NAME AND ADDRESS"
+            }
 
         elif section == "treatment_options_merger":
             config[section] = {"attributes": f"{args.attributes},supplementary"}
@@ -194,6 +231,12 @@ def createINI(args):
 
         elif section == "summary":
             config[section] = {"attributes": args.attributes}
+        
+        elif section == "pwgs.summary":
+            config[section] = {
+                "attributes": args.attributes,
+                "results_file": args.results_file
+            }
 
         elif section == "tar.sample":
             config[section] = {
@@ -206,6 +249,17 @@ def createINI(args):
                 "consensus_cruncher_file": args.consensuscruncher_file,
                 "consensus_cruncher_file_normal": args.consensuscruncher_file_normal,
                 "raw_coverage": args.mean_coverage
+            }
+        
+        elif section == "pwgs.sample":
+            config[section] = {
+                "attributes": args.attributes,
+                "qcetl_cache": "/scratch2/groups/gsi/production/qcetl_v1",
+                "bamqc_results": args.bamqc_results,
+                "results_file": args.results_file,
+                "candidate_snv_count": args.candidate_snv_count,
+                "coverage": args.mean_coverage,
+                "median_insert_size": args.median_insert_size,
             }
 
         elif section == "tar.snv_indel":
@@ -232,6 +286,14 @@ def createINI(args):
                 "clinical": "True" if args.attributes == "clinical" else "False",
                 "supplementary": "False"
             }
+        
+        elif section == "pwgs.analysis":
+            config[section] = {
+                "attributes": args.attributes,
+                "results_file": args.results_file,
+                "vaf_file": args.vaf_file,
+                "hbc_file": args.hbc_file
+            }
 
     return config
 
@@ -245,11 +307,14 @@ if __name__ == "__main__":
     parser.add_argument("donor")
     parser.add_argument("report_id")
     parser.add_argument("assay")
-    parser.add_argument("tumor_id")
-    parser.add_argument("normal_id")
     parser.add_argument("patient_study_id")
     parser.add_argument("mean_coverage")
-    parser.add_argument("--attributes", default="research")
+    parser.add_argument("attributes")
+
+    # Shared optional arguments
+    parser.add_argument("--tumor_id")
+    parser.add_argument("--normal_id")
+    parser.add_argument("--group_id")
 
     # WGTS-specific
     parser.add_argument("--purple_zip")
@@ -271,7 +336,15 @@ if __name__ == "__main__":
     parser.add_argument("--maf_file_normal")
     parser.add_argument("--seg_file")
     parser.add_argument("--plots_file")
-    parser.add_argument("--group_id")
+
+    # PWGS-specific
+    parser.add_argument("--wgs_report_id")
+    parser.add_argument("--median_insert_size")
+    parser.add_argument("--results_file")
+    parser.add_argument("--vaf_file")
+    parser.add_argument("--hbc_file")
+    parser.add_argument("--bamqc_results")
+    parser.add_argument("--candidate_snv_count")
 
     args = parser.parse_args()
     config = createINI(args)
@@ -279,4 +352,4 @@ if __name__ == "__main__":
     with open("djerba_input.ini", "w") as configfile:
         config.write(configfile)
 
-    print("INI file successfully written as 'djerba_input.ini'")
+    logging.info("INI file successfully written as 'djerba_input.ini'")
