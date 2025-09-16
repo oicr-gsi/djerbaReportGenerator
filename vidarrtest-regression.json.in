@@ -23,7 +23,7 @@
             "mafPath": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.mutect2.filtered.maf.gz",
             "mavisPath": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.mavis_summary.tab",
             "arribaPath": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.fusions.tsv",
-            "rsemGenesResults": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.genes.results",
+            "rsemGenesResults": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.genes.results"
         },
         "djerbaReportGenerator.pwgsFiles": {
             "resultsFile": "",
