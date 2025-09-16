@@ -27,7 +27,7 @@
             "vafFile": "",
             "hbcFile": "",
             "bamqcResults": "",
-            candidateSnvCount": ""
+            "candidateSnvCount": ""
         },
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": "",
