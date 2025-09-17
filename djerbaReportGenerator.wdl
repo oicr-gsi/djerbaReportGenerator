@@ -1,32 +1,32 @@
 version 1.0
 
 struct WgtsInput {
-    String purpleZip
-    String msiFile
-    String ctdnaFile
-    String hrdPath
-    String mafPath
-    String mavisPath
-    String arribaPath
-    String rsemGenesResults
+    File? purpleZip
+    File? msiFile
+    File? ctdnaFile
+    File? hrdPath
+    File? mafPath
+    File? mavisPath
+    File? arribaPath
+    File? rsemGenesResults
 }
 
 struct TarInput {
-    String ichorcnaFile
-    String consensuscruncherFile
-    String consensuscruncherFileNormal
-    String mafFile
-    String mafFileNormal
-    String segFile
-    String plotsFile
+    File? ichorcnaFile
+    File? consensuscruncherFile
+    File? consensuscruncherFileNormal
+    File? mafFile
+    File? mafFileNormal
+    File? segFile
+    File? plotsFile
 }
 
 struct PwgsInput {
-    String resultsFile
-    String vafFile
-    String hbcFile
-    String bamqcResults
-    String candidateSnvCount
+    File? resultsFile
+    File? vafFile
+    File? hbcFile
+    File? bamqcResults
+    File? candidateSnvCount
 }
 
 workflow djerbaReportGenerator {
@@ -68,9 +68,9 @@ workflow djerbaReportGenerator {
         cbioId: "Assay type"
         groupId: "External sample identifier"
         wgsReportId: "WGS assay report identifier"
-        wgtsFiles: "Struct containing file paths from the WGTS assay"
-        tarFiles: "Struct containing file paths from the TAR assay"
-        pwgsFiles: "Struct containing file paths from the PWGS assay"
+        wgtsFiles: "Struct containing optional file paths from the WGTS assay"
+        tarFiles: "Struct containing optional file paths from the TAR assay"
+        pwgsFiles: "Struct containing optional file paths from the PWGS assay"
         patientStudyId: "Patient identifier"
         LimsId: "Array of LIMS IDs"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
@@ -86,15 +86,15 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads"
             },
             {
-                name : "pandas/2.1.3",
+                name: "pandas/2.1.3",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
             {
-                name : "gsi-qc-etl/1.38",
+                name: "gsi-qc-etl/1.38",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
-                name : "djerba/1.10.2",
+                name: "djerba/1.10.2",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -126,12 +126,35 @@ workflow djerbaReportGenerator {
 
     String create_ini_args =
     if assay == "PWGS" then
-        "--group_id \"~{groupId}\" --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.medianInsertSize}\" --results_file \"~{pwgsFiles.resultsFile}\" --vaf_file \"~{pwgsFiles.vafFile}\" --hbc_file \"~{pwgsFiles.hbcFile}\" --bamqc_results \"~{pwgsFiles.bamqcResults}\" --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\""
+        "--group_id \"~{groupId}\" --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.medianInsertSize}\""
+        + (if defined(pwgsFiles.resultsFile) then " --results_file \"~{pwgsFiles.resultsFile}\"" else "")
+        + (if defined(pwgsFiles.vafFile) then " --vaf_file \"~{pwgsFiles.vafFile}\"" else "")
+        + (if defined(pwgsFiles.hbcFile) then " --hbc_file \"~{pwgsFiles.hbcFile}\"" else "")
+        + (if defined(pwgsFiles.bamqcResults) then " --bamqc_results \"~{pwgsFiles.bamqcResults}\"" else "")
+        + (if defined(pwgsFiles.candidateSnvCount) then " --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\"" else "")
     else if assay == "TAR" then
-        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\" --ichorcna_file \"~{tarFiles.ichorcnaFile}\" --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\" --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\" --maf_file \"~{tarFiles.mafFile}\" --maf_file_normal \"~{tarFiles.mafFileNormal}\" --seg_file \"~{tarFiles.segFile}\" --plots_file \"~{tarFiles.plotsFile}\" --group_id \"~{groupId}\""
+        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
+        + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
+        + (if defined(tarFiles.consensuscruncherFile) then " --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\"" else "")
+        + (if defined(tarFiles.consensuscruncherFileNormal) then " --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\"" else "")
+        + (if defined(tarFiles.mafFile) then " --maf_file \"~{tarFiles.mafFile}\"" else "")
+        + (if defined(tarFiles.mafFileNormal) then " --maf_file_normal \"~{tarFiles.mafFileNormal}\"" else "")
+        + (if defined(tarFiles.segFile) then " --seg_file \"~{tarFiles.segFile}\"" else "")
+        + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
+        + " --group_id \"~{groupId}\""
+    else if assay == "WGTS" then
+        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\""
+        + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
+        + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
+        + (if defined(wgtsFiles.ctdnaFile) then " --ctdna_file \"~{wgtsFiles.ctdnaFile}\"" else "")
+        + (if defined(wgtsFiles.hrdPath) then " --hrd_path \"~{wgtsFiles.hrdPath}\"" else "")
+        + (if defined(wgtsFiles.mafPath) then " --maf_path \"~{wgtsFiles.mafPath}\"" else "")
+        + (if defined(wgtsFiles.mavisPath) then " --mavis_path \"~{wgtsFiles.mavisPath}\"" else "")
+        + (if defined(wgtsFiles.arribaPath) then " --arriba_path \"~{wgtsFiles.arribaPath}\"" else "")
+        + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
+        + " --callability \"~{queryCallability.callability}\""
     else
-        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\" --purple_zip \"~{wgtsFiles.purpleZip}\" --msi_file \"~{wgtsFiles.msiFile}\" --ctdna_file \"~{wgtsFiles.ctdnaFile}\" --hrd_path \"~{wgtsFiles.hrdPath}\" --maf_path \"~{wgtsFiles.mafPath}\" --mavis_path \"~{wgtsFiles.mavisPath}\" --arriba_path \"~{wgtsFiles.arribaPath}\" --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\" --callability \"~{queryCallability.callability}\""
-
+        ""
 
     call createINI {
         input:
