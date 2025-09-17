@@ -23,20 +23,20 @@
             "rsemGenesResults": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.genes.results"
         },
         "djerbaReportGenerator.pwgsFiles": {
-            "resultsFile": null,
-            "vafFile": null,
-            "hbcFile": null,
-            "bamqcResults": null,
-            "candidateSnvCount": null
+            "resultsFile": "",
+            "vafFile": "",
+            "hbcFile": "",
+            "bamqcResults": "",
+            "candidateSnvCount": ""
         },
         "djerbaReportGenerator.tarFiles": {
-            "ichorcnaFile": null,
-            "consensuscruncherFile": null,
-            "consensuscruncherFileNormal": null,
-            "mafFile": null,
-            "mafFileNormal": null,
-            "segFile": null,
-            "plotsFile": null
+            "ichorcnaFile": "",
+            "consensuscruncherFile": "",
+            "consensuscruncherFileNormal": "",
+            "mafFile": "",
+            "mafFileNormal": "",
+            "segFile": "",
+            "plotsFile": ""
         },
         "djerbaReportGenerator.patientStudyId": "Test-01-1980-T1FC",
         "djerbaReportGenerator.LimsId": ["7610_1_LDI116710", "7610_2_LDI116710", "7610_3_LDI116710", "7610_4_LDI116710", "7610_5_LDI116710", "7610_6_LDI116710", "7610_7_LDI116710", "7610_8_LDI116710", "7654_1_LDI116710", "7654_2_LDI116710", "7654_3_LDI116710", "7654_4_LDI116710", "7654_5_LDI116710", "7654_6_LDI116710", "7654_7_LDI116710", "7654_8_LDI116710"],
@@ -197,23 +197,23 @@
             "candidateSnvCount": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test03.SNP.count.txt"
         },
         "djerbaReportGenerator.wgtsFiles": {
-            "purpleZip": null,
-            "msiFile": null,
-            "ctdnaFile": null,
-            "hrdPath": null,
-            "mafPath": null,
-            "mavisPath": null,
-            "arribaPath": null,
-            "rsemGenesResults": null
+            "purpleZip": "",
+            "msiFile": "",
+            "ctdnaFile": "",
+            "hrdPath": "",
+            "mafPath": "",
+            "mavisPath": "",
+            "arribaPath": "",
+            "rsemGenesResults": ""
         },
         "djerbaReportGenerator.tarFiles": {
-            "ichorcnaFile": null,
-            "consensuscruncherFile": null,
-            "consensuscruncherFileNormal": null,
-            "mafFile": null,
-            "mafFileNormal": null,
-            "segFile": null,
-            "plotsFile": null
+            "ichorcnaFile": "",
+            "consensuscruncherFile": "",
+            "consensuscruncherFileNormal": "",
+            "mafFile": "",
+            "mafFileNormal": "",
+            "segFile": "",
+            "plotsFile": ""
         },
         "djerbaReportGenerator.tumorId": null,
         "djerbaReportGenerator.normalId": null,
