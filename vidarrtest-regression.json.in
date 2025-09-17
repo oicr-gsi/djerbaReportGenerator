@@ -112,21 +112,21 @@
             "plotsFile": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02_genomeWide_all_sols.pdf"
         },
         "djerbaReportGenerator.wgtsFiles": {
-            "purpleZip": null,
-            "msiFile": null,
-            "ctdnaFile": null,
-            "hrdPath": null,
-            "mafPath": null,
-            "mavisPath": null,
-            "arribaPath": null,
-            "rsemGenesResults": null
+            "purpleZip": "",
+            "msiFile": "",
+            "ctdnaFile": "",
+            "hrdPath": "",
+            "mafPath": "",
+            "mavisPath": "",
+            "arribaPath": "",
+            "rsemGenesResults": ""
         },
         "djerbaReportGenerator.pwgsFiles": {
-            "resultsFile": null,
-            "vafFile": null,
-            "hbcFile": null,
-            "bamqcResults": null,
-            "candidateSnvCount": null
+            "resultsFile": "",
+            "vafFile": "",
+            "hbcFile": "",
+            "bamqcResults": "",
+            "candidateSnvCount": ""
         },
         "djerbaReportGenerator.sampleNameTumor": null,
         "djerbaReportGenerator.sampleNameNormal": null,
