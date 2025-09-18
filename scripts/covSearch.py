@@ -4,97 +4,138 @@ import argparse
 import logging
 import pandas as pd
 
-# Create a parser instance
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
+# Argument parser
 parser = argparse.ArgumentParser()
-
-# Add arguments to the parser
-parser.add_argument("--gsiqcetl-dir",
-                    action="append",
-                    help="GSI-QC-ETL directory to retrieve QC data from. If multiple are "
-                         "specified, they are used in the order specified to fill in any missing "
-                         "data")
-
-parser.add_argument("--lims-id",
-                    nargs="+", 
+parser.add_argument("--gsiqcetl-dir", action="append", required=True,
+                    help="Path(s) to GSI-QC-ETL directories.")
+parser.add_argument("--lims-id", nargs="+", required=True,
                     help="List of LIMS IDs to search for.")
-
-# Parse the arguments
+parser.add_argument("--assay", type=str, required=True,
+                    help="Assay type: WGTS, PWGS, or TAR.")
 args = parser.parse_args()
 
-# Access parsed arguments
+# Flatten any nested LIMS IDs (e.g., [['ABC123']] -> ['ABC123'])
+def _flatten_lims_ids(lims_ids):
+    flat = []
+    for item in lims_ids:
+        if isinstance(item, list):
+            flat.extend(item)
+        else:
+            flat.append(item)
+    return [str(i) for i in flat]
+
+lims_ids = _flatten_lims_ids(args.lims_id)
+assay = args.assay.upper()
 gsiqcetl_dirs = args.gsiqcetl_dir
-lims_ids = args.lims_id
 
-# Load QC caches
+# Load ETL caches
 etl_caches = QCETLMultiCache(gsiqcetl_dirs)
-bamqc4merged_columns = gsiqcetl.column.BamQc4MergedColumn
 
-# load the cache, or return empty cache if the cache is missing or seems invalid
-# (based on missing ID column)
-# merged means the cache is merged and has a Merged Pinery Lims ID column. The merged rows will be
-# exploded so that individual Pinery Lims IDs can be used for lookup
-def _load_cache(etl_caches, cache_version: str, cache_name: str, id_column, merged: bool = False):
+def _load_cache(etl_caches, cache_version, cache_name, id_column, merged=False):
     try:
         version = etl_caches.load_same_version(cache_version).remove_missing(cache_name)
         cache = version.unique(cache_name)
         if id_column not in cache:
             logging.warning(f"'{id_column}' column not found in cache: {cache_name}.{cache_version}")
             return pd.DataFrame()
+        if merged:
+            single_id_column = "Pinery Lims ID"
+            cache[single_id_column] = cache[id_column]
+            cache = cache.explode(single_id_column)
         else:
-            if merged:
-                single_id_column = "Pinery Lims ID"
-                cache[single_id_column] = cache[id_column]
-                cache = cache.explode(single_id_column)
-            else:
-                single_id_column = id_column
-            cache.set_index(single_id_column, inplace=True, drop=False)
-            cache.sort_index(inplace=True)
-            return cache
+            single_id_column = id_column
+        cache.set_index(single_id_column, inplace=True, drop=False)
+        cache.sort_index(inplace=True)
+        return cache
     except Exception:
-            logging.exception(f'Error loading cache: {cache_version}.{cache_name}')
-            return pd.DataFrame()
+        logging.exception(f"Failed to load cache: {cache_version}.{cache_name}")
+        return pd.DataFrame()
 
-def _get_coverage(cache: pd.DataFrame, lims_ids: list[str]):
-    '''
-    Filters the cache to return rows matching the given LIMS IDs and returns the
-    relevant coverage deduplicated values.
-    Parameters:
-    ----------
-    cache (pd.DataFrame): The cache DataFrame with 'Merged Pinery Lims ID' as index.
-    lims_ids (list[str]): List of LIMS IDs to filter by.
-    coverage_column (str): The name of the column to return.
-
-    Returns:
-    --------
-    pd.DataFrame: Filtered DataFrame containing matching LIMS IDs and coverage.
-    '''
+def _get_metric(cache: pd.DataFrame, lims_ids: list[str], column_name: str):
     if not lims_ids:
-        logging.warning("No LIMS IDs provided for filtering.")
+        logging.warning("No LIMS IDs provided.")
         return pd.DataFrame()
 
     lims_ids = [str(i) for i in lims_ids]
     filtered = cache.loc[cache.index.intersection(lims_ids)]
 
     if filtered.empty:
-        logging.warning("No matching LIMS IDs found in the cache.")
+        logging.warning("No matching LIMS IDs found.")
         return pd.DataFrame()
-    
+
     tumor = filtered[filtered['Tissue Type'] != 'R']
     if tumor.empty:
-        logging.warning("No tumor samples found in the filtered cache.")
+        logging.warning("No tumor samples found.")
         return pd.DataFrame()
-    else:
-        coverage = tumor['coverage deduplicated'].drop_duplicates()
-        coverage = coverage.round(2)
 
-    return coverage
+    values = tumor[column_name].drop_duplicates()
+    return values
 
-bamqc4merged = _load_cache(etl_caches, 'bamqc4merged', 'bamqc4merged',
-            bamqc4merged_columns.MergedPineryLimsID, True)
-
-coverage = _get_coverage(bamqc4merged, lims_ids)
-if not coverage.empty:
+# Assay-specific logic
+if assay == "WGTS":
+    cache = _load_cache(
+        etl_caches, "bamqc4merged", "bamqc4merged",
+        gsiqcetl.column.BamQc4MergedColumn.MergedPineryLimsID,
+        merged=True
+    )
+    coverage = _get_metric(cache, lims_ids, "coverage deduplicated")
     with open("coverage.txt", "w") as f:
-        f.write("\n".join(coverage.astype(str)))
+        if not coverage.empty:
+            coverage = coverage.round(2).astype(str)
+            f.write("\n".join(coverage))
+        else:
+            logging.warning("No coverage data available to write for WGTS.")
+            f.write("")  
+    with open("insertsize.txt", "w") as f:
+        f.write("")
+        logging.info("Created empty insertsize.txt for WGTS assay.")
+
+elif assay == "PWGS":
+    cache = _load_cache(
+        etl_caches, "bamqc4merged", "bamqc4merged",
+        gsiqcetl.column.BamQc4MergedColumn.MergedPineryLimsID,
+        merged=True
+    )
+    # Coverage
+    coverage = _get_metric(cache, lims_ids, "coverage deduplicated")
+    with open("coverage.txt", "w") as f:
+        if not coverage.empty:
+            coverage = coverage.astype(int).astype(str)
+            f.write("\n".join(coverage))
+        else:
+            logging.warning("No coverage data available to write for PWGS.")
+            f.write("")  
+
+    # Insert size
+    insert_size = _get_metric(cache, lims_ids, "insert size median")
+    with open("insertsize.txt", "w") as f:
+        if not insert_size.empty:
+            insert_size = insert_size.astype(int).astype(str)
+            f.write("\n".join(insert_size))
+        else:
+            logging.warning("No insert size data available to write for PWGS.")
+            f.write("")  
+
+elif assay == "TAR":
+    cache = _load_cache(
+        etl_caches, "hsmetrics", "metrics",
+        gsiqcetl.column.HsMetricsColumn.MergedPineryLimsID,
+        merged=True
+    )
+    coverage = _get_metric(cache, lims_ids, "MEAN_BAIT_COVERAGE")
+    with open("coverage.txt", "w") as f:
+        if not coverage.empty:
+            coverage = coverage.astype(int).astype(str)
+            f.write("\n".join(coverage))
+        else:
+            logging.warning("No coverage data available to write for TAR.")
+            f.write("")  
+    with open("insertsize.txt", "w") as f:
+        f.write("")
+        logging.info("Created empty insertsize.txt for TAR assay.")
+
 else:
-    print("No coverage data available to write.")
+    raise ValueError(f"Unsupported assay: {assay}")

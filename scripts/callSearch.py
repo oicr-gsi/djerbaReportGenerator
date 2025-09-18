@@ -92,4 +92,4 @@ if not call.empty:
     with open("callability.txt", "w") as f:
         f.write("\n".join(call.astype(str)))
 else:
-    print("No callability data available to write.")
+    logging.warning("No callability data available to write.")

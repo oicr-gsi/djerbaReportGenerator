@@ -1,14 +1,32 @@
 version 1.0
 
-struct ReportInputFiles {
-    File purpleZip
-    File msiFile
-    File ctdnaFile
-    File hrdPath
-    File mafPath
-    File mavisPath
-    File arribaPath
-    File rsemGenesResults
+struct WgtsInput {
+    File? purpleZip
+    File? msiFile
+    File? ctdnaFile
+    File? hrdPath
+    File? mafPath
+    File? mavisPath
+    File? arribaPath
+    File? rsemGenesResults
+}
+
+struct TarInput {
+    File? ichorcnaFile
+    File? consensuscruncherFile
+    File? consensuscruncherFileNormal
+    File? mafFile
+    File? mafFileNormal
+    File? segFile
+    File? plotsFile
+}
+
+struct PwgsInput {
+    File? resultsFile
+    File? vafFile
+    File? hbcFile
+    File? bamqcResults
+    File? candidateSnvCount
 }
 
 workflow djerbaReportGenerator {
@@ -18,15 +36,21 @@ workflow djerbaReportGenerator {
         String donor
         String reportId
         String assay
-        String tumorId
-        String normalId
-        String sampleNameTumor
-        String sampleNameNormal
-        String sampleNameAux
-        ReportInputFiles reportFiles
+        String? tumorId
+        String? normalId
+        String attributes
+        String? sampleNameTumor
+        String? sampleNameNormal
+        String? sampleNameAux
+        String? cbioId
+        String? groupId
+        String? wgsReportId
         String patientStudyId
         Array[String] LimsId
-        String outputFileNamePrefix = donor  
+        WgtsInput wgtsFiles
+        TarInput tarFiles
+        PwgsInput pwgsFiles
+        String outputFileNamePrefix = donor
     }
 
     parameter_meta {
@@ -37,10 +61,16 @@ workflow djerbaReportGenerator {
         assay: "Assay name"
         tumorId: "Tumor sample identifier"
         normalId: "Matched normal sample identifier"
+        attributes: "research or clinical"
         sampleNameTumor: "Sample name for the tumour WG sample"
         sampleNameNormal: "Sample name for the normal WG sample"
         sampleNameAux: "Sample name for tumor transcriptome (WT)"
-        reportFiles: "Struct containing paths to input files required for Djerba report generation"
+        cbioId: "Assay type"
+        groupId: "External sample identifier"
+        wgsReportId: "WGS assay report identifier"
+        wgtsFiles: "Struct containing optional file paths from the WGTS assay"
+        tarFiles: "Struct containing optional file paths from the TAR assay"
+        pwgsFiles: "Struct containing optional file paths from the PWGS assay"
         patientStudyId: "Patient identifier"
         LimsId: "Array of LIMS IDs"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
@@ -56,47 +86,75 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads"
             },
             {
-                name : "pandas/2.1.3",
+                name: "pandas/2.1.3",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
             {
-                name : "gsi-qc-etl/1.36",
+                name: "gsi-qc-etl/1.38",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
-                name : "djerba/1.9.2",
+                name: "djerba/1.10.2",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
         output_meta: {
-            reportHTML: {
-                description: "The RUO report in HTML file format",
-                vidarr_label: "reportHTML"
-            },
-            reportPDF: {
-                description: "The RUO report in PDF file format",
-                vidarr_label: "reportPDF"
-            },
-            reportJSON: {
-                description: "The RUO report in JSON file format",
-                vidarr_label: "reportJSON"
+            reportOutput: {
+                description: "The djerba output folder",
+                vidarr_label: "reportOutput"
             }
         }
     }
 
-    call queryCallability {
-        input:
-            LimsId = LimsId,
-            activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
-            archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro"
+    # queryCallability only if WGTS
+    if (assay == "WGTS") {
+        call queryCallability {
+            input:
+                LimsId = LimsId,
+                activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
+                archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro"
+        }
     }
 
     call queryCoverage {
         input:
             LimsId = LimsId,
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
-            archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro"
+            archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro",
+            assay = assay
     }
+
+    String create_ini_args =
+    if assay == "PWGS" then
+        "--group_id \"~{groupId}\" --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.medianInsertSize}\""
+        + (if defined(pwgsFiles.resultsFile) then " --results_file \"~{pwgsFiles.resultsFile}\"" else "")
+        + (if defined(pwgsFiles.vafFile) then " --vaf_file \"~{pwgsFiles.vafFile}\"" else "")
+        + (if defined(pwgsFiles.hbcFile) then " --hbc_file \"~{pwgsFiles.hbcFile}\"" else "")
+        + (if defined(pwgsFiles.bamqcResults) then " --bamqc_results \"~{pwgsFiles.bamqcResults}\"" else "")
+        + (if defined(pwgsFiles.candidateSnvCount) then " --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\"" else "")
+    else if assay == "TAR" then
+        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
+        + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
+        + (if defined(tarFiles.consensuscruncherFile) then " --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\"" else "")
+        + (if defined(tarFiles.consensuscruncherFileNormal) then " --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\"" else "")
+        + (if defined(tarFiles.mafFile) then " --maf_file \"~{tarFiles.mafFile}\"" else "")
+        + (if defined(tarFiles.mafFileNormal) then " --maf_file_normal \"~{tarFiles.mafFileNormal}\"" else "")
+        + (if defined(tarFiles.segFile) then " --seg_file \"~{tarFiles.segFile}\"" else "")
+        + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
+        + " --group_id \"~{groupId}\""
+    else if assay == "WGTS" then
+        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\""
+        + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
+        + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
+        + (if defined(wgtsFiles.ctdnaFile) then " --ctdna_file \"~{wgtsFiles.ctdnaFile}\"" else "")
+        + (if defined(wgtsFiles.hrdPath) then " --hrd_path \"~{wgtsFiles.hrdPath}\"" else "")
+        + (if defined(wgtsFiles.mafPath) then " --maf_path \"~{wgtsFiles.mafPath}\"" else "")
+        + (if defined(wgtsFiles.mavisPath) then " --mavis_path \"~{wgtsFiles.mavisPath}\"" else "")
+        + (if defined(wgtsFiles.arribaPath) then " --arriba_path \"~{wgtsFiles.arribaPath}\"" else "")
+        + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
+        + " --callability \"~{queryCallability.callability}\""
+    else
+        ""
 
     call createINI {
         input:
@@ -105,35 +163,29 @@ workflow djerbaReportGenerator {
             study = study,
             reportId = reportId,
             assay = assay,
-            tumorId = tumorId,
-            normalId = normalId,
-            purpleZip = reportFiles.purpleZip,
-            msiFile = reportFiles.msiFile,
-            ctdnaFile = reportFiles.ctdnaFile,
-            hrdPath = reportFiles.hrdPath,
             patientStudyId = patientStudyId,
-            mafPath = reportFiles.mafPath,
-            mavisPath = reportFiles.mavisPath,
-            arribaPath = reportFiles.arribaPath,
-            rsemGenesResults = reportFiles.rsemGenesResults,
-            callability = queryCallability.callability,
             meanCoverage = queryCoverage.meanCoverage,
+            attributes = attributes,
+            createArgs = create_ini_args
     }
 
-    call createIntermediaries {
-        input:
-            project = project,
-            donor = donor,
-            patientStudyId = patientStudyId,
-            tumorId = tumorId,
-            normalId = normalId,
-            sampleNameTumor = sampleNameTumor,
-            sampleNameNormal = sampleNameNormal,
-            sampleNameAux = sampleNameAux
+    if (assay == "WGTS") {
+        call createIntermediaries {
+            input:
+                project = project,
+                donor = donor,
+                patientStudyId = patientStudyId,
+                tumorId = select_first([tumorId, ""]),
+                normalId = select_first([normalId, ""]),
+                sampleNameTumor = select_first([sampleNameTumor, ""]),
+                sampleNameNormal = select_first([sampleNameNormal, ""]),
+                sampleNameAux = select_first([sampleNameAux, ""])
+        }
     }
 
     call runDjerba {
         input:
+            assay = assay,
             Prefix = outputFileNamePrefix,
             iniFile = createINI.iniFile,
             sampleInfo = createIntermediaries.sampleInfo,
@@ -141,22 +193,16 @@ workflow djerbaReportGenerator {
     }
 
     output {
-        File reportHTML = runDjerba.reportHtml
-        File reportPDF = runDjerba.reportPdf
-        File reportJSON = runDjerba.reportJson
+        File reportOutput = runDjerba.reportDir
     }
 }
-
-# ========================
-# Configure and run djerba
-# ========================
 
 task queryCallability {
     input {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.36"
+        String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -191,7 +237,8 @@ task queryCoverage {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.36"
+        String assay
+        String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -200,6 +247,7 @@ task queryCoverage {
         LimsId: "The LIMS Identifiers that will be used to query the cache"
         activeCache: "Path to the qc etl cache for active projects"
         archivalCache: "Path to the qc etl cache for all active and inactive projects"
+        assay: "Assay name"
         modules: "Name and version of module to be loaded"
         timeout: "Timeout in hours"
         jobMemory: "Memory in Gb for this job" 
@@ -207,7 +255,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
     >>>
 
     runtime {
@@ -218,6 +266,7 @@ task queryCoverage {
 
     output {
         String meanCoverage = read_string("coverage.txt")
+        String? medianInsertSize = read_string("insertsize.txt")
     }
 }
 
@@ -228,20 +277,11 @@ task createINI {
         String donor
         String reportId
         String assay
-        String tumorId
-        String normalId
-        String purpleZip
-        String msiFile
-        String ctdnaFile
-        String hrdPath
         String patientStudyId
-        String mafPath
-        String mavisPath
-        String arribaPath
-        String rsemGenesResults
-        String callability
         String meanCoverage
-        String modules = "djerbareporter/1.0.0 pandas/2.1.3"
+        String attributes
+        String createArgs 
+        String modules = "djerbareporter/1.0.0"
         Int timeout = 4
         Int jobMemory = 2
     }
@@ -252,18 +292,9 @@ task createINI {
         donor: "Donor"
         reportId: "Report identifier"
         assay: "Assay name"
-        tumorId: "Tumor sample identifier"
-        normalId: "Matched normal sample identifier"
-        purpleZip: "Path to purple output"
-        msiFile: "Path to msi output"
-        ctdnaFile: "Path to SNP counts"
-        hrdPath: "Path to genome signatures"
+        attributes: "research or clinical"
         patientStudyId: "Patient identifier"
-        mafPath: "Path to mutect2 output"
-        mavisPath: "Path to mavis output"
-        arribaPath: "Path to gene fusion output"
-        rsemGenesResults: "Path to rsem output"
-        callability: "Callability value from queryCallability task"
+        createArgs: "Arguments to pass to the script"
         meanCoverage: "Mean coverage value from queryCoverage task"
         modules: "Name and version of module to be loaded"
         jobMemory: "Memory in Gb for this job"
@@ -271,25 +302,16 @@ task createINI {
     }
 
     command <<<
-        createIni \
-        "~{project}" \
-        "~{study}" \
-        "~{donor}" \
-        "~{reportId}" \
-        "~{assay}" \
-        "~{tumorId}" \
-        "~{normalId}" \
-        "~{purpleZip}" \
-        "~{msiFile}" \
-        "~{ctdnaFile}" \
-        "~{hrdPath}" \
-        "~{patientStudyId}" \
-        "~{mafPath}" \
-        "~{mavisPath}" \
-        "~{arribaPath}" \
-        "~{rsemGenesResults}" \
-        "~{callability}" \
-        "~{meanCoverage}"
+        createINI \
+            "~{project}" \
+            "~{study}" \
+            "~{donor}" \
+            "~{reportId}" \
+            "~{assay}" \
+            "~{patientStudyId}" \
+            "~{meanCoverage}" \
+            "~{attributes}" \
+            ~{createArgs}
     >>>
 
     runtime {
@@ -353,16 +375,18 @@ task createIntermediaries {
 task runDjerba {
     input {
         String Prefix
+        String assay
         File iniFile
-        File sampleInfo
-        File provenanceSubset
-        String modules = "djerba/1.9.2"
+        File? sampleInfo
+        File? provenanceSubset
+        String modules = "djerba/1.10.2"
         Int timeout = 10
         Int jobMemory = 25
     }
 
     parameter_meta {
         Prefix: "Prefix for the output files"
+        assay: "Name of assay"
         iniFile: "The INI input for Djerba"
         sampleInfo: "Intermediate file with sample information"
         provenanceSubset: "Intermediate empty file required to run Djerba"
@@ -373,8 +397,11 @@ task runDjerba {
 
     command <<<
         mkdir -p ~{Prefix}
-        mv ~{sampleInfo} ~{Prefix}
-        mv ~{provenanceSubset} ~{Prefix}
+
+        if [[ "~{assay}" == "WGTS" ]]; then
+            mv ~{sampleInfo} ~{Prefix}
+            mv ~{provenanceSubset} ~{Prefix}
+        fi
 
         export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
         
@@ -383,6 +410,9 @@ task runDjerba {
             -o ~{Prefix} \
             --pdf \
             --no-archive 
+            
+        # Compress output dir
+        tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
     >>>
 
     runtime {
@@ -392,8 +422,6 @@ task runDjerba {
     }
 
     output {
-        File reportHtml = "~{Prefix}/~{Prefix}-v1_report.research.html"
-        File reportPdf = "~{Prefix}/~{Prefix}-v1_report.research.pdf"
-        File reportJson = "~{Prefix}/~{Prefix}-v1_report.json"
+        File reportDir = "~{Prefix}.tar.gz"
     }
 }
