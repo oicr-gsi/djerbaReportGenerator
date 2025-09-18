@@ -419,6 +419,6 @@ task runDjerba {
     }
 
     output {
-        File reportDir = "./~{Prefix}"
+        File reportDir = "~{Prefix}"
     }
 }
