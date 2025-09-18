@@ -1,3 +1,3 @@
 #!/bin/bash
 
-find . -name "*.tar.gz" -exec md5sum {} + | sort -V
+find . -name "*.tar.gz" | sort -V
