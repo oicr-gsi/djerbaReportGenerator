@@ -410,6 +410,9 @@ task runDjerba {
             -o ~{Prefix} \
             --pdf \
             --no-archive 
+            
+        # Compress output dir
+        tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
     >>>
 
     runtime {
@@ -419,6 +422,6 @@ task runDjerba {
     }
 
     output {
-        File reportDir = "~{Prefix}"
+        File reportDir = "~{Prefix}.tar.gz"
     }
 }
