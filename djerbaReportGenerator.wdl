@@ -94,7 +94,7 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
-                name: "djerba/1.10.2",
+                name: "djerba/1.11.1",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -166,6 +166,7 @@ workflow djerbaReportGenerator {
             patientStudyId = patientStudyId,
             meanCoverage = queryCoverage.meanCoverage,
             attributes = attributes,
+            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.1/lib/python3.10/site-packages/djerba/plugins/supplement/body"
             createArgs = create_ini_args
     }
 
@@ -280,6 +281,7 @@ task createINI {
         String patientStudyId
         String meanCoverage
         String attributes
+        String template_dir
         String createArgs 
         String modules = "djerbareporter/1.0.0"
         Int timeout = 4
@@ -293,6 +295,7 @@ task createINI {
         reportId: "Report identifier"
         assay: "Assay name"
         attributes: "research or clinical"
+        template_dir: "Path to the supplement_body template directory"
         patientStudyId: "Patient identifier"
         createArgs: "Arguments to pass to the script"
         meanCoverage: "Mean coverage value from queryCoverage task"
@@ -311,6 +314,7 @@ task createINI {
             "~{patientStudyId}" \
             "~{meanCoverage}" \
             "~{attributes}" \
+            "~{template_dir}" \
             ~{createArgs}
     >>>
 
@@ -379,7 +383,7 @@ task runDjerba {
         File iniFile
         File? sampleInfo
         File? provenanceSubset
-        String modules = "djerba/1.10.2"
+        String modules = "djerba/1.11.1"
         Int timeout = 10
         Int jobMemory = 25
     }

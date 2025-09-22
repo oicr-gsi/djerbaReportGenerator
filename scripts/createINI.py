@@ -201,7 +201,7 @@ def createINI(args):
                 "clinical_geneticist_name": "PLACEHOLDER",
                 "clinical_geneticist_licence": "XXXXXXX",
                 "failed": "False",
-                "template_dir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.9.2/lib/python3.10/site-packages/djerba/plugins/supplement/body"
+                "template_dir": args.template_dir
             }
 
         elif section == "gene_information_merger":
@@ -310,6 +310,7 @@ if __name__ == "__main__":
     parser.add_argument("patient_study_id")
     parser.add_argument("mean_coverage")
     parser.add_argument("attributes")
+    parser.add_argument("template_dir")
 
     # Shared optional arguments
     parser.add_argument("--tumor_id")
