@@ -25,6 +25,18 @@ def createINI(args):
             "supplement.body",
             "gene_information_merger"
         ]
+    elif assay == "WGS":
+        sections = [
+            "input_params_helper",
+            "wgts.cnv_purple",
+            "core",
+            "genomic_landscape",
+            "case_overview",
+            "sample",
+            "wgts.snv_indel",
+            "supplement.body",
+            "gene_information_merger"
+        ]
     elif assay == "TAR":
         sections = [
             "core",

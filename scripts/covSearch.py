@@ -14,7 +14,7 @@ parser.add_argument("--gsiqcetl-dir", action="append", required=True,
 parser.add_argument("--lims-id", nargs="+", required=True,
                     help="List of LIMS IDs to search for.")
 parser.add_argument("--assay", type=str, required=True,
-                    help="Assay type: WGTS, PWGS, or TAR.")
+                    help="Assay type: WGTS, WGS, PWGS, or TAR.")
 args = parser.parse_args()
 
 # Flatten any nested LIMS IDs (e.g., [['ABC123']] -> ['ABC123'])
@@ -75,7 +75,7 @@ def _get_metric(cache: pd.DataFrame, lims_ids: list[str], column_name: str):
     return values
 
 # Assay-specific logic
-if assay == "WGTS":
+if assay in ("WGTS", "WGS"):
     cache = _load_cache(
         etl_caches, "bamqc4merged", "bamqc4merged",
         gsiqcetl.column.BamQc4MergedColumn.MergedPineryLimsID,

@@ -11,6 +11,14 @@ struct WgtsInput {
     File? rsemGenesResults
 }
 
+struct WgsInput {
+    File? purpleZip
+    File? msiFile
+    File? ctdnaFile
+    File? hrdPath
+    File? mafPath
+}
+
 struct TarInput {
     File? ichorcnaFile
     File? consensuscruncherFile
@@ -48,6 +56,7 @@ workflow djerbaReportGenerator {
         String patientStudyId
         Array[String] LimsId
         WgtsInput wgtsFiles
+        WgsInput wgsFiles
         TarInput tarFiles
         PwgsInput pwgsFiles
         String outputFileNamePrefix = donor
@@ -69,6 +78,7 @@ workflow djerbaReportGenerator {
         groupId: "External sample identifier"
         wgsReportId: "WGS assay report identifier"
         wgtsFiles: "Struct containing optional file paths from the WGTS assay"
+        wgsFiles: "Struct containing optional file paths from the WGS assay"
         tarFiles: "Struct containing optional file paths from the TAR assay"
         pwgsFiles: "Struct containing optional file paths from the PWGS assay"
         patientStudyId: "Patient identifier"
@@ -106,8 +116,8 @@ workflow djerbaReportGenerator {
         }
     }
 
-    # queryCallability only if WGTS
-    if (assay == "WGTS") {
+    # queryCallability only if WGTS or WGS
+    if (assay == "WGTS" || assay == "WGS") {
         call queryCallability {
             input:
                 LimsId = LimsId,
@@ -121,7 +131,8 @@ workflow djerbaReportGenerator {
             LimsId = LimsId,
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
             archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro",
-            assay = assay
+            assay = assay,
+            script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/djerbaReportGenerator/scripts/covSearch.py"
     }
 
     String create_ini_args =
@@ -153,6 +164,14 @@ workflow djerbaReportGenerator {
         + (if defined(wgtsFiles.arribaPath) then " --arriba_path \"~{wgtsFiles.arribaPath}\"" else "")
         + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
         + " --callability \"~{queryCallability.callability}\""
+    else if assay == "WGS" then
+        "--tumor_id \"~{tumorId}\" --normal_id \"~{normalId}\""
+        + (if defined(wgsFiles.purpleZip) then " --purple_zip \"~{wgsFiles.purpleZip}\"" else "")
+        + (if defined(wgsFiles.msiFile) then " --msi_file \"~{wgsFiles.msiFile}\"" else "")
+        + (if defined(wgsFiles.ctdnaFile) then " --ctdna_file \"~{wgsFiles.ctdnaFile}\"" else "")
+        + (if defined(wgsFiles.hrdPath) then " --hrd_path \"~{wgsFiles.hrdPath}\"" else "")
+        + (if defined(wgsFiles.mafPath) then " --maf_path \"~{wgsFiles.mafPath}\"" else "")
+        + " --callability \"~{queryCallability.callability}\"" 
     else
         ""
 
@@ -166,11 +185,12 @@ workflow djerbaReportGenerator {
             patientStudyId = patientStudyId,
             meanCoverage = queryCoverage.meanCoverage,
             attributes = attributes,
-            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.1/lib/python3.10/site-packages/djerba/plugins/supplement/body"
-            createArgs = create_ini_args
+            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.1/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+            createArgs = create_ini_args,
+            script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/djerbaReportGenerator/scripts/createINI.py"
     }
 
-    if (assay == "WGTS") {
+    if (assay == "WGTS"|| assay == "WGS") {
         call createIntermediaries {
             input:
                 project = project,
@@ -239,6 +259,7 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
+        String script
         String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
@@ -256,7 +277,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+        python3 ~{script} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
     >>>
 
     runtime {
@@ -283,6 +304,7 @@ task createINI {
         String attributes
         String template_dir
         String createArgs 
+        String script
         String modules = "djerbareporter/1.0.0"
         Int timeout = 4
         Int jobMemory = 2
@@ -305,16 +327,16 @@ task createINI {
     }
 
     command <<<
-        createINI \
-            "~{project}" \
-            "~{study}" \
-            "~{donor}" \
-            "~{reportId}" \
-            "~{assay}" \
-            "~{patientStudyId}" \
-            "~{meanCoverage}" \
-            "~{attributes}" \
-            "~{template_dir}" \
+        python3 ~{script} \
+            ~{project} \
+            ~{study} \
+            ~{donor} \
+            ~{reportId} \
+            ~{assay} \
+            ~{patientStudyId} \
+            ~{meanCoverage} \
+            ~{attributes} \
+            ~{template_dir} \
             ~{createArgs}
     >>>
 
@@ -402,7 +424,7 @@ task runDjerba {
     command <<<
         mkdir -p ~{Prefix}
 
-        if [[ "~{assay}" == "WGTS" ]]; then
+        if [[ ~{assay} == "WGTS" ]]; then
             mv ~{sampleInfo} ~{Prefix}
             mv ~{provenanceSubset} ~{Prefix}
         fi
