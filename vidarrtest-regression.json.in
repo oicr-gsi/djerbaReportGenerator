@@ -304,7 +304,7 @@
             "msiFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.filter.deduped.recalibrated.msi.booted","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
             "ctdnaFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.SNP.count.txt","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
             "hrdPath": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.signatures.json","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
-            "mafPath": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.mutect2.filtered.maf.gz","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
+            "mafPath": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.mutect2.filtered.maf.gz","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"}
         },
         "djerbaReportGenerator.wgtsFiles": {
             "purpleZip": null,
