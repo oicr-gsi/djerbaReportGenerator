@@ -22,6 +22,13 @@
             "arribaPath": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.fusions.tsv","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
             "rsemGenesResults": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.genes.results","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"}
         },
+        "djerbaReportGenerator.wgsFiles": {
+            "purpleZip": null,
+            "msiFile": null,
+            "ctdnaFile": null,
+            "hrdPath": null,
+            "mafPath": null
+        },
         "djerbaReportGenerator.pwgsFiles": {
             "resultsFile": null,
             "vafFile": null,
@@ -121,6 +128,13 @@
             "arribaPath": null,
             "rsemGenesResults": null
         },
+        "djerbaReportGenerator.wgsFiles": {
+            "purpleZip": null,
+            "msiFile": null,
+            "ctdnaFile": null,
+            "hrdPath": null,
+            "mafPath": null
+        },
         "djerbaReportGenerator.pwgsFiles": {
             "resultsFile": null,
             "vafFile": null,
@@ -206,6 +220,13 @@
             "arribaPath": null,
             "rsemGenesResults": null
         },
+        "djerbaReportGenerator.wgsFiles": {
+            "purpleZip": null,
+            "msiFile": null,
+            "ctdnaFile": null,
+            "hrdPath": null,
+            "mafPath": null
+        },
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": null,
             "consensuscruncherFile": null,
@@ -261,6 +282,102 @@
             "metrics_calculate": "@CHECKOUT@/tests/calculate.sh",
             "metrics_compare": "@CHECKOUT@/tests/compare.sh",
             "output_metrics": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/output_metrics/workflow_test_03_PWGS.metrics",
+            "type": "script"
+            }
+        ]
+    },
+    {
+    "arguments":{
+        "djerbaReportGenerator.project": "Test01",
+        "djerbaReportGenerator.study": "Test01",
+        "djerbaReportGenerator.donor": "Test_01",
+        "djerbaReportGenerator.reportId": "Test_01",
+        "djerbaReportGenerator.assay": "WGS",
+        "djerbaReportGenerator.tumorId": "Test-01-1980-T1FC_Co_P",
+        "djerbaReportGenerator.normalId": "CD-3781",
+        "djerbaReportGenerator.sampleNameTumor": "Test_01-01",
+        "djerbaReportGenerator.sampleNameNormal": "Test_01-02",
+        "djerbaReportGenerator.sampleNameAux": "Test_01-03",
+        "djerbaReportGenerator.attributes": "clinical",
+        "djerbaReportGenerator.wgsFiles": {
+            "purpleZip": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.solPrimary.purple.zip","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
+            "msiFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.filter.deduped.recalibrated.msi.booted","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
+            "ctdnaFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.SNP.count.txt","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
+            "hrdPath": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.signatures.json","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
+            "mafPath": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.mutect2.filtered.maf.gz","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
+        },
+        "djerbaReportGenerator.wgtsFiles": {
+            "purpleZip": null,
+            "msiFile": null,
+            "ctdnaFile": null,
+            "hrdPath": null,
+            "mafPath": null,
+            "mavisPath": null,
+            "arribaPath": null,
+            "rsemGenesResults": null
+        },
+        "djerbaReportGenerator.pwgsFiles": {
+            "resultsFile": null,
+            "vafFile": null,
+            "hbcFile": null,
+            "bamqcResults": null,
+            "candidateSnvCount": null
+        },
+        "djerbaReportGenerator.tarFiles": {
+            "ichorcnaFile": null,
+            "consensuscruncherFile": null,
+            "consensuscruncherFileNormal": null,
+            "mafFile": null,
+            "mafFileNormal": null,
+            "segFile": null,
+            "plotsFile": null
+        },
+        "djerbaReportGenerator.patientStudyId": "Test-01-1980-T1FC",
+        "djerbaReportGenerator.LimsId": ["7610_1_LDI116710", "7610_2_LDI116710", "7610_3_LDI116710", "7610_4_LDI116710", "7610_5_LDI116710", "7610_6_LDI116710", "7610_7_LDI116710", "7610_8_LDI116710", "7654_1_LDI116710", "7654_2_LDI116710", "7654_3_LDI116710", "7654_4_LDI116710", "7654_5_LDI116710", "7654_6_LDI116710", "7654_7_LDI116710", "7654_8_LDI116710"],
+        "djerbaReportGenerator.cbioId": null,
+        "djerbaReportGenerator.groupId": null,
+        "djerbaReportGenerator.wgsReportId": null,
+        "djerbaReportGenerator.outputFileNamePrefix": null,
+        "djerbaReportGenerator.queryCallability.modules": null,
+        "djerbaReportGenerator.queryCallability.timeout": null,
+        "djerbaReportGenerator.queryCallability.jobMemory": null,
+        "djerbaReportGenerator.queryCoverage.modules": null,
+        "djerbaReportGenerator.queryCoverage.timeout": null,
+        "djerbaReportGenerator.queryCoverage.jobMemory": null,
+        "djerbaReportGenerator.createINI.callability": null,
+        "djerbaReportGenerator.createINI.meanCoverage": null,
+        "djerbaReportGenerator.createINI.modules": null,
+        "djerbaReportGenerator.createINI.timeout": null,
+        "djerbaReportGenerator.createINI.jobMemory": null,
+        "djerbaReportGenerator.runDjerba.Prefix": null,
+        "djerbaReportGenerator.runDjerba.iniFile": null,
+        "djerbaReportGenerator.runDjerba.sampleInfo": null,
+        "djerbaReportGenerator.runDjerba.provenanceSubset": null,
+        "djerbaReportGenerator.runDjerba.modules": null,
+        "djerbaReportGenerator.runDjerba.timeout": null,
+        "djerbaReportGenerator.runDjerba.jobMemory": null
+    },
+    "description": "workflow_test_04_WGS",
+    "engineArguments": {
+        "write_to_cache": false,
+        "read_from_cache": false
+    },
+    "id": "workflow_test_04_WGS",
+    "metadata": {
+        "djerbaReportGenerator.reportOutput": {
+            "contents": [
+                {
+                    "outputDirectory": "@SCRATCH@/@DATE@_Workflow_djerbaReportGenerator_workflow_test_04_WGS_@JENKINSID@"
+                }
+            ],
+            "type": "ALL"
+        }
+    },
+    "validators": [
+        {
+            "metrics_calculate": "@CHECKOUT@/tests/calculate.sh",
+            "metrics_compare": "@CHECKOUT@/tests/compare.sh",
+            "output_metrics": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/output_metrics/workflow_test_04_WGS.metrics",
             "type": "script"
             }
         ]

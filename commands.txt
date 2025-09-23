@@ -3,48 +3,40 @@ This section lists command(s) run by djerbaReportGenerator workflow
 
 * Running djerbaReportGenerator
 
-djerbaReportGenerator creates RUO Reports by generating intermediate INI files and running Djerba 1.9.2. 
+djerbaReportGenerator creates clinical and RUO djerba reports by generating intermediate INI files and running Djerba 1.11.1. 
 
 
-Retrieve callability from mutectcallability qc-etl cache
+Retrieve callability from mutectcallability qc-etl cache if assay type is WGTS or WGS
 
 ```
     LimsId="~{sep=" " LimsId}"
     callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
 ```
 
-Retrieve coverage_deduplicated from bamqc4merged qc-etl cache
+Retrieve median_insert_size and coverage_deduplicated from bamqc4merged or hsmetrics qc-etl cache depending on assay type
 
 ```
     LimsId="~{sep=" " LimsId}"
-    covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+    covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
 ```
 
 Create the intermediate INI file 
 
 ```
-    createIni \
-        "~{project}" \
-        "~{study}" \
-        "~{donor}" \
-        "~{reportId}" \
-        "~{assay}" \
-        "~{tumorId}" \
-        "~{normalId}" \
-        "~{purpleZip}" \
-        "~{msiFile}" \
-        "~{ctdnaFile}" \
-        "~{hrdPath}" \
-        "~{patientStudyId}" \
-        "~{mafPath}" \
-        "~{mavisPath}" \
-        "~{arribaPath}" \
-        "~{rsemGenesResults}" \
-        "~{callability}" \
-        "~{meanCoverage}"
+    createINI \
+            ~{project} \
+            ~{study} \
+            ~{donor} \
+            ~{reportId} \
+            ~{assay} \
+            ~{patientStudyId} \
+            ~{meanCoverage} \
+            ~{attributes} \
+            ~{template_dir} \
+            ~{createArgs}
 ```
 
-Create sample_info.json and provenanve_subset.tsv.gz file
+Create sample_info.json and provenanve_subset.tsv.gz file if assay type is WGS or WGTS
 
 ```
 cat <<EOF > sample_info.json
@@ -64,19 +56,26 @@ cat <<EOF > provenance_subset.tsv.gz
 EOF
 ```
 
-Run Djerba 1.9.2
+Run Djerba 1.11.1
 
 ```
    mkdir -p ~{Prefix}
-   mv ~{sampleInfo} ~{Prefix}
-   mv ~{provenanceSubset} ~{Prefix}
-   export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
 
-   $DJERBA_ROOT/bin/djerba.py report \
-       -i ~{iniFile} \
-       -o ~{Prefix} \
-       --pdf \
-       --no-archive
+        if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
+            mv ~{sampleInfo} ~{Prefix}
+            mv ~{provenanceSubset} ~{Prefix}
+        fi
+
+        export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
+        
+        $DJERBA_ROOT/bin/djerba.py report \
+            -i ~{iniFile} \
+            -o ~{Prefix} \
+            --pdf \
+            --no-archive 
+            
+        # Compress output dir
+        tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
 ```
 
 

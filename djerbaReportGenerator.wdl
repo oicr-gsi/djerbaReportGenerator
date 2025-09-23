@@ -77,10 +77,10 @@ workflow djerbaReportGenerator {
         cbioId: "Assay type"
         groupId: "External sample identifier"
         wgsReportId: "WGS assay report identifier"
-        wgtsFiles: "Struct containing optional file paths from the WGTS assay"
-        wgsFiles: "Struct containing optional file paths from the WGS assay"
-        tarFiles: "Struct containing optional file paths from the TAR assay"
-        pwgsFiles: "Struct containing optional file paths from the PWGS assay"
+        wgtsFiles: "Struct containing optional file paths for the WGTS assay"
+        wgsFiles: "Struct containing optional file paths for the WGS assay"
+        tarFiles: "Struct containing optional file paths for the TAR assay"
+        pwgsFiles: "Struct containing optional file paths for the PWGS assay"
         patientStudyId: "Patient identifier"
         LimsId: "Array of LIMS IDs"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
@@ -89,7 +89,7 @@ workflow djerbaReportGenerator {
     meta {
         author: "Aditi Nagaraj Nallan"
         email: "anallan@oicr.on.ca"
-        description: "Given metrics, the workflow will create an intermediate INI file and run djerba to generate RUO reports."
+        description: "Given metrics, the workflow will create an intermediate INI file and run djerba to generate Clinical or RUO reports."
         dependencies: [
             {
                 name: "djerbareporter/1.0.0",
@@ -131,9 +131,8 @@ workflow djerbaReportGenerator {
             LimsId = LimsId,
             activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
             archivalCache = "/.mounts/labs/gsi/gsiqcetl_archival/production/ro",
-            assay = assay,
-            script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/djerbaReportGenerator/scripts/covSearch.py"
-    }
+            assay = assay
+        }
 
     String create_ini_args =
     if assay == "PWGS" then
@@ -186,8 +185,7 @@ workflow djerbaReportGenerator {
             meanCoverage = queryCoverage.meanCoverage,
             attributes = attributes,
             template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.1/lib/python3.10/site-packages/djerba/plugins/supplement/body",
-            createArgs = create_ini_args,
-            script = "/.mounts/labs/gsiprojects/gsi/gsiusers/anallan/repositories/djerbaReportGenerator/scripts/createINI.py"
+            createArgs = create_ini_args
     }
 
     if (assay == "WGTS"|| assay == "WGS") {
@@ -259,7 +257,6 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
-        String script
         String modules = "djerbareporter/1.0.0"
         Int timeout = 5
         Int jobMemory = 12
@@ -277,7 +274,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        python3 ~{script} --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
     >>>
 
     runtime {
@@ -304,7 +301,6 @@ task createINI {
         String attributes
         String template_dir
         String createArgs 
-        String script
         String modules = "djerbareporter/1.0.0"
         Int timeout = 4
         Int jobMemory = 2
@@ -327,7 +323,7 @@ task createINI {
     }
 
     command <<<
-        python3 ~{script} \
+        createINI \
             ~{project} \
             ~{study} \
             ~{donor} \
@@ -424,7 +420,7 @@ task runDjerba {
     command <<<
         mkdir -p ~{Prefix}
 
-        if [[ ~{assay} == "WGTS" ]]; then
+        if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
             mv ~{sampleInfo} ~{Prefix}
             mv ~{provenanceSubset} ~{Prefix}
         fi
