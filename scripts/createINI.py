@@ -23,7 +23,8 @@ def createINI(args):
             "fusion",
             "expression_helper",
             "supplement.body",
-            "gene_information_merger"
+            "gene_information_merger",
+            "treatment_options_merger"
         ]
     elif assay == "WGS":
         sections = [
@@ -35,7 +36,8 @@ def createINI(args):
             "sample",
             "wgts.snv_indel",
             "supplement.body",
-            "gene_information_merger"
+            "gene_information_merger",
+            "treatment_options_merger"
         ]
     elif assay == "TAR":
         sections = [
