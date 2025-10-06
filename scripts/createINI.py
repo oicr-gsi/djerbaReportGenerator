@@ -21,6 +21,7 @@ def createINI(args):
             "sample",
             "wgts.snv_indel",
             "fusion",
+            "summary",
             "expression_helper",
             "supplement.body",
             "gene_information_merger",
@@ -35,6 +36,7 @@ def createINI(args):
             "case_overview",
             "sample",
             "wgts.snv_indel",
+            "summary",
             "supplement.body",
             "gene_information_merger",
             "treatment_options_merger"

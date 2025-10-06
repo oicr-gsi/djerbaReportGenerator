@@ -59,6 +59,8 @@ workflow djerbaReportGenerator {
         WgsInput wgsFiles
         TarInput tarFiles
         PwgsInput pwgsFiles
+        String djerbaVersion
+        String templateDir
         String outputFileNamePrefix = donor
     }
 
@@ -184,7 +186,7 @@ workflow djerbaReportGenerator {
             patientStudyId = patientStudyId,
             meanCoverage = queryCoverage.meanCoverage,
             attributes = attributes,
-            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.1/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+            template_dir = templateDir,
             createArgs = create_ini_args
     }
 
@@ -207,6 +209,7 @@ workflow djerbaReportGenerator {
             assay = assay,
             Prefix = outputFileNamePrefix,
             iniFile = createINI.iniFile,
+            djerbaVersion = djerbaVersion,
             sampleInfo = createIntermediaries.sampleInfo,
             provenanceSubset = createIntermediaries.provenanceSubset
     }
@@ -401,7 +404,7 @@ task runDjerba {
         File iniFile
         File? sampleInfo
         File? provenanceSubset
-        String modules = "djerba/1.11.1"
+        String modules = djerbaVersion
         Int timeout = 10
         Int jobMemory = 25
     }
