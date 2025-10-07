@@ -305,6 +305,8 @@
         "djerbaReportGenerator.sampleNameNormal": "Test_01-02",
         "djerbaReportGenerator.sampleNameAux": "Test_01-03",
         "djerbaReportGenerator.attributes": "clinical",
+        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.1",
+        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.1/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.wgsFiles": {
             "purpleZip": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.solPrimary.purple.zip","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
             "msiFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.filter.deduped.recalibrated.msi.booted","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
