@@ -3,7 +3,7 @@ This section lists command(s) run by djerbaReportGenerator workflow
 
 * Running djerbaReportGenerator
 
-djerbaReportGenerator creates clinical and RUO djerba reports by generating intermediate INI files and running Djerba 1.11.1. 
+djerbaReportGenerator creates clinical and RUO djerba reports by generating intermediate INI files and running Djerba. 
 
 
 Retrieve callability from mutectcallability qc-etl cache if assay type is WGTS or WGS
@@ -56,26 +56,32 @@ cat <<EOF > provenance_subset.tsv.gz
 EOF
 ```
 
-Run Djerba 1.11.1
+Run Djerba
 
 ```
    mkdir -p ~{Prefix}
 
-        if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
-            mv ~{sampleInfo} ~{Prefix}
-            mv ~{provenanceSubset} ~{Prefix}
-        fi
+    if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
+        mv ~{sampleInfo} ~{Prefix}
+        mv ~{provenanceSubset} ~{Prefix}
+    fi
 
-        export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
+    export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
         
-        $DJERBA_ROOT/bin/djerba.py report \
-            -i ~{iniFile} \
-            -o ~{Prefix} \
-            --pdf \
-            --no-archive 
-            
-        # Compress output dir
-        tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
+    $DJERBA_ROOT/bin/djerba.py report \
+        -i ~{iniFile} \
+        -o ~{Prefix} \
+        --pdf \
+        --no-archive 
+        
+    # Run blurbomatic
+    if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
+        python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{Prefix}_report.json > ~{Prefix}/results_summary.txt
+        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{Prefix}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
+    fi
+
+    # Compress output dir
+    tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
 ```
 
 

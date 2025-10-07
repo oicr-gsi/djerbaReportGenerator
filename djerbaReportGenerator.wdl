@@ -85,6 +85,8 @@ workflow djerbaReportGenerator {
         pwgsFiles: "Struct containing optional file paths for the PWGS assay"
         patientStudyId: "Patient identifier"
         LimsId: "Array of LIMS IDs"
+        djerbaVersion: "Djerba software version to use"
+        templateDir: "Path to the supplement_body template directory"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
     }
 
@@ -207,6 +209,7 @@ workflow djerbaReportGenerator {
     call runDjerba {
         input:
             assay = assay,
+            attributes = attributes,
             Prefix = outputFileNamePrefix,
             iniFile = createINI.iniFile,
             djerbaVersion = djerbaVersion,
@@ -224,7 +227,7 @@ task queryCallability {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "djerbareporter/1.0.0"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.38"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -240,7 +243,7 @@ task queryCallability {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+        python3 $DJERBAREPORTER_ROOT/share/callSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
     >>>
 
     runtime {
@@ -260,7 +263,7 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
-        String modules = "djerbareporter/1.0.0"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.38"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -277,7 +280,7 @@ task queryCoverage {
 
     command <<<
         LimsId="~{sep=" " LimsId}"
-        covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+        python3 $DJERBAREPORTER_ROOT/share/covSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
     >>>
 
     runtime {
@@ -326,7 +329,7 @@ task createINI {
     }
 
     command <<<
-        createINI \
+        python3 $DJERBAREPORTER_ROOT/share/createINI.py \
             ~{project} \
             ~{study} \
             ~{donor} \
@@ -401,10 +404,12 @@ task runDjerba {
     input {
         String Prefix
         String assay
+        String attributes
         File iniFile
         File? sampleInfo
         File? provenanceSubset
-        String modules = djerbaVersion
+        String djerbaVersion
+        String modules = "djerbareporter/1.0.0 ~{djerbaVersion}" 
         Int timeout = 10
         Int jobMemory = 25
     }
@@ -412,9 +417,11 @@ task runDjerba {
     parameter_meta {
         Prefix: "Prefix for the output files"
         assay: "Name of assay"
+        attributes: "research or clinical"
         iniFile: "The INI input for Djerba"
         sampleInfo: "Intermediate file with sample information"
         provenanceSubset: "Intermediate empty file required to run Djerba"
+        djerbaVersion: "Djerba software version"
         jobMemory: "Memory in Gb for this job"
         timeout: "Timeout in hours"
         modules: "Name and version of module to be loaded"
@@ -435,7 +442,13 @@ task runDjerba {
             -o ~{Prefix} \
             --pdf \
             --no-archive 
-            
+        
+        # Run blurbomatic
+        if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
+            python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{Prefix}_report.json > ~{Prefix}/results_summary.txt
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{Prefix}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
+        fi
+
         # Compress output dir
         tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
     >>>
