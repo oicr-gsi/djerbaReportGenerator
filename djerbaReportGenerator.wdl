@@ -140,14 +140,14 @@ workflow djerbaReportGenerator {
 
     String create_ini_args =
     if assay == "PWGS" then
-        "--group_id \"~{groupId}\" --mean_coverage \"~{meanCoverage}\"  --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.medianInsertSize}\""
+        "--group_id \"~{groupId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\"  --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.medianInsertSize}\""
         + (if defined(pwgsFiles.resultsFile) then " --results_file \"~{pwgsFiles.resultsFile}\"" else "")
         + (if defined(pwgsFiles.vafFile) then " --vaf_file \"~{pwgsFiles.vafFile}\"" else "")
         + (if defined(pwgsFiles.hbcFile) then " --hbc_file \"~{pwgsFiles.hbcFile}\"" else "")
         + (if defined(pwgsFiles.bamqcResults) then " --bamqc_results \"~{pwgsFiles.bamqcResults}\"" else "")
         + (if defined(pwgsFiles.candidateSnvCount) then " --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\"" else "")
     else if assay == "TAR" then
-        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{meanCoverage}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
+        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
         + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
         + (if defined(tarFiles.consensuscruncherFile) then " --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\"" else "")
         + (if defined(tarFiles.consensuscruncherFileNormal) then " --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\"" else "")
@@ -157,7 +157,7 @@ workflow djerbaReportGenerator {
         + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
         + " --group_id \"~{groupId}\""
     else if assay == "WGTS" then
-        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{meanCoverage}\" --normal_id \"~{normalId}\""
+        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
         + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
         + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
         + (if defined(wgtsFiles.ctdnaFile) then " --ctdna_file \"~{wgtsFiles.ctdnaFile}\"" else "")
@@ -168,7 +168,7 @@ workflow djerbaReportGenerator {
         + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
         + " --callability \"~{queryCallability.callability}\""
     else if assay == "WGS" then
-        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{meanCoverage}\" --normal_id \"~{normalId}\""
+        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
         + (if defined(wgsFiles.purpleZip) then " --purple_zip \"~{wgsFiles.purpleZip}\"" else "")
         + (if defined(wgsFiles.msiFile) then " --msi_file \"~{wgsFiles.msiFile}\"" else "")
         + (if defined(wgsFiles.ctdnaFile) then " --ctdna_file \"~{wgsFiles.ctdnaFile}\"" else "")
