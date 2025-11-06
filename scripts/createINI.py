@@ -80,13 +80,13 @@ def createINI(args):
             config[section] = {
                 "assay": args.assay,
                 "donor": args.donor,
-                "oncotree_code": "NA",
-                "primary_cancer": "NA",
+                "oncotree_code": "N/A",
+                "primary_cancer": "N/A",
                 "project": args.project,
                 "requisition_approved": "2025-01-01",
                 "requisition_id": args.report_id,
-                "sample_type": "NA",
-                "site_of_biopsy": "NA",
+                "sample_type": "N/A",
+                "site_of_biopsy": "N/A",
                 "study": args.study
             }
 
@@ -95,16 +95,16 @@ def createINI(args):
                 "assay": args.assay,
                 "cbio_id": args.cbioId,
                 "donor": args.donor,
-                "known_variants": "Required",
+                "known_variants": "N/A",
                 "normal_id": args.normal_id,
                 "oncotree_code": "N/A",
                 "patient_study_id": args.patient_study_id,
-                "primary_cancer": "None",
+                "primary_cancer": "N/A",
                 "project": args.project,
                 "requisition_approved": "2025-01-01",
                 "requisition_id": args.report_id,
-                "sample_type": "Required",
-                "site_of_biopsy": "Required",
+                "sample_type": "N/A",
+                "site_of_biopsy": "N/A",
                 "study": args.study,
                 "tumour_id": args.tumor_id,
                 "attributes": args.attributes,
@@ -115,7 +115,7 @@ def createINI(args):
                 "attributes": args.attributes,
                 "assay": args.assay,
                 "tumour_id": args.tumor_id,
-                "oncotree_code": "NA",
+                "oncotree_code": "N/A",
                 "whizbam_project": args.project,
                 "purple_zip": args.purple_zip
             }
@@ -131,11 +131,11 @@ def createINI(args):
             config[section] = {
                 "attributes": args.attributes,
                 "tumour_id": args.tumor_id,
-                "oncotree_code": "NA",
+                "oncotree_code": "N/A",
                 "msi_file": args.msi_file,
                 "ctdna_file": args.ctdna_file,
                 "hrd_path": args.hrd_path,
-                "sample_type": "NA",
+                "sample_type": "N/A",
                 "clinical": "False",
                 "supplementary": "False"
             }
@@ -144,8 +144,8 @@ def createINI(args):
             config[section] = {
                 "attributes": args.attributes,
                 "assay": args.assay,
-                "primary_cancer": "None",
-                "site_of_biopsy": "Required",
+                "primary_cancer": "N/A",
+                "site_of_biopsy": "N/A",
                 "donor": args.donor,
                 "study": args.study,
                 "patient_study_id": args.patient_study_id,
@@ -157,7 +157,7 @@ def createINI(args):
         
         elif section == "pwgs.case_overview":
             config[section] = {
-                "primary_cancer": "Required",
+                "primary_cancer": "N/A",
                 "requisition_approved": "2025-01-01",
                 "study": args.study,
                 "wgs_report_id": args.wgs_report_id,
@@ -172,8 +172,8 @@ def createINI(args):
                 "attributes": args.attributes,
                 "callability": args.callability,
                 "mean_coverage": args.mean_coverage,
-                "oncotree_code": "NA",
-                "sample_type": "NA",
+                "oncotree_code": "N/A",
+                "sample_type": "N/A",
                 "donor": args.donor,
                 "tumour_id": args.tumor_id
             }
@@ -182,7 +182,7 @@ def createINI(args):
             config[section] = {
                 "attributes": args.attributes,
                 "maf_path": args.maf_path,
-                "oncotree_code": "NA",
+                "oncotree_code": "N/A",
                 "tumour_id": args.tumor_id,
                 "normal_id": args.normal_id,
                 "project": args.project,
@@ -196,7 +196,7 @@ def createINI(args):
                 "mavis_path": args.mavis_path,
                 "arriba_path": args.arriba_path,
                 "tumour_id": args.tumor_id,
-                "oncotree_code": "NA",
+                "oncotree_code": "N/A",
                 "whizbam_project": args.project
             }
 
@@ -259,8 +259,8 @@ def createINI(args):
                 "attributes": args.attributes,
                 "group_id": args.group_id,
                 "oncotree_code": "N/A",
-                "known_variants": "Required",
-                "sample_type": "Required",
+                "known_variants": "N/A",
+                "sample_type": "N/A",
                 "ichorcna_file": args.ichorcna_file,
                 "consensus_cruncher_file": args.consensuscruncher_file,
                 "consensus_cruncher_file_normal": args.consensuscruncher_file_normal,
@@ -324,7 +324,6 @@ if __name__ == "__main__":
     parser.add_argument("report_id")
     parser.add_argument("assay")
     parser.add_argument("patient_study_id")
-    parser.add_argument("mean_coverage")
     parser.add_argument("attributes")
     parser.add_argument("template_dir")
 
@@ -332,6 +331,7 @@ if __name__ == "__main__":
     parser.add_argument("--tumor_id")
     parser.add_argument("--normal_id")
     parser.add_argument("--group_id")
+    parser.add_argument("--mean_coverage")
 
     # WGTS-specific
     parser.add_argument("--purple_zip")

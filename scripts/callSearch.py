@@ -4,6 +4,9 @@ import argparse
 import logging
 import pandas as pd
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
 # Create a parser instance
 parser = argparse.ArgumentParser()
 
@@ -88,8 +91,8 @@ callability = _load_cache(etl_caches, 'mutectcallability', 'mutectcallability',
             callability_columns.MergedPineryLimsID, True)
 
 call = _get_callability(callability, lims_ids)
-if not call.empty:
-    with open("callability.txt", "w") as f:
+with open("callability.txt", "w") as f:
+    if not call.empty:
         f.write("\n".join(call.astype(str)))
-else:
-    logging.warning("No callability data available to write.")
+    else:
+        f.write("0")

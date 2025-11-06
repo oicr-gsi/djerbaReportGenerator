@@ -88,7 +88,7 @@ if assay in ("WGTS", "WGS"):
             f.write("\n".join(coverage))
         else:
             logging.warning("No coverage data available to write for WGTS.")
-            f.write("")  
+            f.write("0")  
     with open("insertsize.txt", "w") as f:
         f.write("")
         logging.info("Created empty insertsize.txt for WGTS assay.")
@@ -107,7 +107,7 @@ elif assay == "PWGS":
             f.write("\n".join(coverage))
         else:
             logging.warning("No coverage data available to write for PWGS.")
-            f.write("")  
+            f.write("0")  
 
     # Insert size
     insert_size = _get_metric(cache, lims_ids, "insert size median")
@@ -117,7 +117,7 @@ elif assay == "PWGS":
             f.write("\n".join(insert_size))
         else:
             logging.warning("No insert size data available to write for PWGS.")
-            f.write("")  
+            f.write("0")  
 
 elif assay == "TAR":
     cache = _load_cache(
@@ -132,7 +132,7 @@ elif assay == "TAR":
             f.write("\n".join(coverage))
         else:
             logging.warning("No coverage data available to write for TAR.")
-            f.write("")  
+            f.write("0")  
     with open("insertsize.txt", "w") as f:
         f.write("")
         logging.info("Created empty insertsize.txt for TAR assay.")
