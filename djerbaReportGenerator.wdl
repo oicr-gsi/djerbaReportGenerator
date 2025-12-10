@@ -44,10 +44,10 @@ workflow djerbaReportGenerator {
         String donor
         String reportId
         String assay
-        String? tumorId
+        String? tumourId
         String? normalId
         String attributes
-        String? sampleNameTumor
+        String? sampleNameTumour
         String? sampleNameNormal
         String? sampleNameAux
         String? cbioId
@@ -70,12 +70,12 @@ workflow djerbaReportGenerator {
         donor: "Donor"
         reportId: "Report identifier"
         assay: "Assay name"
-        tumorId: "Tumor sample identifier"
+        tumourId: "Tumour sample identifier"
         normalId: "Matched normal sample identifier"
         attributes: "research or clinical"
-        sampleNameTumor: "Sample name for the tumour WG sample"
+        sampleNameTumour: "Sample name for the tumour WG sample"
         sampleNameNormal: "Sample name for the normal WG sample"
-        sampleNameAux: "Sample name for tumor transcriptome (WT)"
+        sampleNameAux: "Sample name for tumour transcriptome (WT)"
         cbioId: "Assay type"
         groupId: "External sample identifier"
         wgsReportId: "WGS assay report identifier"
@@ -147,7 +147,7 @@ workflow djerbaReportGenerator {
         + (if defined(pwgsFiles.bamqcResults) then " --bamqc_results \"~{pwgsFiles.bamqcResults}\"" else "")
         + (if defined(pwgsFiles.candidateSnvCount) then " --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\"" else "")
     else if assay == "TAR" then
-        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
+        "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
         + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
         + (if defined(tarFiles.consensuscruncherFile) then " --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\"" else "")
         + (if defined(tarFiles.consensuscruncherFileNormal) then " --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\"" else "")
@@ -157,7 +157,7 @@ workflow djerbaReportGenerator {
         + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
         + " --group_id \"~{groupId}\""
     else if assay == "WGTS" then
-        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
+        "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
         + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
         + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
         + (if defined(wgtsFiles.ctdnaFile) then " --ctdna_file \"~{wgtsFiles.ctdnaFile}\"" else "")
@@ -168,7 +168,7 @@ workflow djerbaReportGenerator {
         + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
         + " --callability \"~{queryCallability.callability}\""
     else if assay == "WGS" then
-        "--tumor_id \"~{tumorId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
+        "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
         + (if defined(wgsFiles.purpleZip) then " --purple_zip \"~{wgsFiles.purpleZip}\"" else "")
         + (if defined(wgsFiles.msiFile) then " --msi_file \"~{wgsFiles.msiFile}\"" else "")
         + (if defined(wgsFiles.ctdnaFile) then " --ctdna_file \"~{wgsFiles.ctdnaFile}\"" else "")
@@ -197,9 +197,9 @@ workflow djerbaReportGenerator {
                 project = project,
                 donor = donor,
                 patientStudyId = patientStudyId,
-                tumorId = select_first([tumorId, ""]),
+                tumourId = select_first([tumourId, ""]),
                 normalId = select_first([normalId, ""]),
-                sampleNameTumor = select_first([sampleNameTumor, ""]),
+                sampleNameTumour = select_first([sampleNameTumour, ""]),
                 sampleNameNormal = select_first([sampleNameNormal, ""]),
                 sampleNameAux = select_first([sampleNameAux, ""])
         }
@@ -210,6 +210,7 @@ workflow djerbaReportGenerator {
             assay = assay,
             attributes = attributes,
             Prefix = outputFileNamePrefix,
+            reportId = reportId,
             iniFile = createINI.iniFile,
             djerbaVersion = djerbaVersion,
             sampleInfo = createIntermediaries.sampleInfo,
@@ -241,6 +242,7 @@ task queryCallability {
     }
 
     command <<<
+        set -euo pipefail
         LimsId="~{sep=" " LimsId}"
         python3 $DJERBAREPORTER_ROOT/share/callSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
     >>>
@@ -278,6 +280,7 @@ task queryCoverage {
     }
 
     command <<<
+        set -euo pipefail
         LimsId="~{sep=" " LimsId}"
         python3 $DJERBAREPORTER_ROOT/share/covSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
     >>>
@@ -326,7 +329,8 @@ task createINI {
     }
 
     command <<<
-        python3 $DJERBAREPORTER_ROOT/share/createINI.py \
+        set -euo pipefail
+        python3 $DJERBAREPORTER_ROOT/share/makeINI.py \
             ~{project} \
             ~{study} \
             ~{donor} \
@@ -354,9 +358,9 @@ task createIntermediaries {
         String project
         String donor
         String patientStudyId
-        String tumorId
+        String tumourId
         String normalId
-        String sampleNameTumor
+        String sampleNameTumour
         String sampleNameNormal
         String sampleNameAux
     }
@@ -365,22 +369,23 @@ task createIntermediaries {
         project: "Project name"
         donor: "Donor"
         patientStudyId: "Patient identifier"
-        tumorId: "Tumor sample identifier"
+        tumourId: "Tumour sample identifier"
         normalId: "Matched normal sample identifier"
-        sampleNameTumor: "Sample name for the tumor WG sample"
+        sampleNameTumour: "Sample name for the tumour WG sample"
         sampleNameNormal: "Sample name for the normal WG sample"
-        sampleNameAux: "Sample name for tumor transcriptome (WT)"
+        sampleNameAux: "Sample name for tumour transcriptome (WT)"
     }
 
     command <<<
+        set -euo pipefail
         cat <<EOF > sample_info.json
             {
             "project": "~{project}",
             "donor": "~{donor}",
             "patient_study_id": "~{patientStudyId}",
-            "tumour_id": "~{tumorId}",
+            "tumour_id": "~{tumourId}",
             "normal_id": "~{normalId}",
-            "sample_name_tumour": "~{sampleNameTumor}",
+            "sample_name_tumour": "~{sampleNameTumour}",
             "sample_name_normal": "~{sampleNameNormal}",
             "sample_name_aux": "~{sampleNameAux}"
             }
@@ -401,6 +406,7 @@ task runDjerba {
         String Prefix
         String assay
         String attributes
+        String reportId
         File iniFile
         File? sampleInfo
         File? provenanceSubset
@@ -414,6 +420,7 @@ task runDjerba {
         Prefix: "Prefix for the output files"
         assay: "Name of assay"
         attributes: "research or clinical"
+        reportId: "Report identifier"
         iniFile: "The INI input for Djerba"
         sampleInfo: "Intermediate file with sample information"
         provenanceSubset: "Intermediate empty file required to run Djerba"
@@ -424,28 +431,36 @@ task runDjerba {
     }
 
     command <<<
+        set -euo pipefail
         mkdir -p ~{Prefix}
 
-        if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
-            mv ~{sampleInfo} ~{Prefix}
-            mv ~{provenanceSubset} ~{Prefix}
+        if [[ "~{assay}" == "WGTS" || "~{assay}" == "WGS" ]]; then    
+            if [[ -n "~{sampleInfo}" ]]; then        
+                rsync -aL "~{sampleInfo}" "~{Prefix}/"    
+            fi    
+            if [[ -n "~{provenanceSubset}" ]]; then        
+                rsync -aL "~{provenanceSubset}" "~{Prefix}/"    
+            fi
         fi
-
-        export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
         
+        export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
+
         $DJERBA_ROOT/bin/djerba.py report \
             -i ~{iniFile} \
             -o ~{Prefix} \
             --pdf \
             --no-archive 
         
-        # Run blurbomatic
+        #Run blurbomatic
         if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
-            python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{Prefix}_report.json > ~{Prefix}/results_summary.txt
-            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{Prefix}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
+            python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
         fi
 
-        # Compress output dir
+        #Copy .ini file into final output directory
+        cp -L -- "~{iniFile}" "~{Prefix}/djerba_input.ini"
+
+        #Compress output dir
         tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
     >>>
 

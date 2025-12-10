@@ -140,29 +140,37 @@ Output | Type | Description | Labels
  Run Djerba
  
  ```
+    set -euo pipefail
     mkdir -p ~{Prefix}
- 
-     if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
-         mv ~{sampleInfo} ~{Prefix}
-         mv ~{provenanceSubset} ~{Prefix}
-     fi
- 
-     export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
-         
-     $DJERBA_ROOT/bin/djerba.py report \
-         -i ~{iniFile} \
-         -o ~{Prefix} \
-         --pdf \
-         --no-archive 
-         
-     # Run blurbomatic
-     if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
-         python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{Prefix}_report.json > ~{Prefix}/results_summary.txt
-         $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{Prefix}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
-     fi
- 
-     # Compress output dir
-     tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
+
+    if [[ "~{assay}" == "WGTS" || "~{assay}" == "WGS" ]]; then    
+        if [[ -n "~{sampleInfo}" ]]; then        
+            rsync -aL "~{sampleInfo}" "~{Prefix}/"    
+        fi    
+        if [[ -n "~{provenanceSubset}" ]]; then        
+            rsync -aL "~{provenanceSubset}" "~{Prefix}/"    
+        fi
+    fi
+        
+    export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
+
+    $DJERBA_ROOT/bin/djerba.py report \
+        -i ~{iniFile} \
+        -o ~{Prefix} \
+        --pdf \
+        --no-archive 
+        
+    #Run blurbomatic
+    if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
+        python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
+        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
+    fi
+
+    #Copy .ini file into final output directory
+    cp -L -- "~{iniFile}" "~{Prefix}/djerba_input.ini"
+
+    #Compress output dir
+    tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
  ```
  
  
