@@ -3,6 +3,7 @@ import configparser
 import os
 import sys
 import logging
+import re
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -13,33 +14,37 @@ def createINI(args):
 
     if assay == "WGTS":
         sections = [
-            "input_params_helper",
-            "wgts.cnv_purple",
             "core",
-            "genomic_landscape",
+            "input_params_helper",
+            "report_title",
+            "patient_info",
             "case_overview",
-            "sample",
-            "wgts.snv_indel",
-            "fusion",
+            "treatment_options_merger",
             "summary",
+            "sample",
+            "genomic_landscape",
             "expression_helper",
-            "supplement.body",
+            "wgts.snv_indel",
+            "wgts.cnv_purple",
+            "fusion",
             "gene_information_merger",
-            "treatment_options_merger"
+            "supplement.body",
         ]
     elif assay == "WGS":
         sections = [
-            "input_params_helper",
-            "wgts.cnv_purple",
             "core",
-            "genomic_landscape",
+            "input_params_helper",
+            "report_title",
+            "patient_info",
             "case_overview",
-            "sample",
-            "wgts.snv_indel",
+            "treatment_options_merger",
             "summary",
-            "supplement.body",
+            "sample",
+            "genomic_landscape",
+            "wgts.snv_indel",
+            "wgts.cnv_purple",
             "gene_information_merger",
-            "treatment_options_merger"
+            "supplement.body",
         ]
     elif assay == "TAR":
         sections = [
@@ -59,8 +64,8 @@ def createINI(args):
         ]
     elif assay == "PWGS":
         sections = [
-            "report_title",
             "core",
+            "report_title",
             "patient_info",
             "pwgs.case_overview",
             "pwgs.summary",
@@ -84,7 +89,7 @@ def createINI(args):
                 "primary_cancer": "N/A",
                 "project": args.project,
                 "requisition_approved": "2025-01-01",
-                "requisition_id": args.report_id,
+                "requisition_id": re.sub(r'-v1$', '', args.report_id),
                 "sample_type": "N/A",
                 "site_of_biopsy": "N/A",
                 "study": args.study
@@ -102,11 +107,11 @@ def createINI(args):
                 "primary_cancer": "N/A",
                 "project": args.project,
                 "requisition_approved": "2025-01-01",
-                "requisition_id": args.report_id,
+                "requisition_id": re.sub(r'-v1$', '', args.report_id),
                 "sample_type": "N/A",
                 "site_of_biopsy": "N/A",
                 "study": args.study,
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "attributes": args.attributes,
             }
 
@@ -114,7 +119,7 @@ def createINI(args):
             config[section] = {
                 "attributes": args.attributes,
                 "assay": args.assay,
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "oncotree_code": "N/A",
                 "whizbam_project": args.project,
                 "purple_zip": args.purple_zip
@@ -130,7 +135,7 @@ def createINI(args):
         elif section == "genomic_landscape":
             config[section] = {
                 "attributes": args.attributes,
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "oncotree_code": "N/A",
                 "msi_file": args.msi_file,
                 "ctdna_file": args.ctdna_file,
@@ -149,7 +154,7 @@ def createINI(args):
                 "donor": args.donor,
                 "study": args.study,
                 "patient_study_id": args.patient_study_id,
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "normal_id": args.normal_id,
                 "report_id": args.report_id,
                 "requisition_approved": "2025-01-01"
@@ -175,7 +180,7 @@ def createINI(args):
                 "oncotree_code": "N/A",
                 "sample_type": "N/A",
                 "donor": args.donor,
-                "tumour_id": args.tumor_id
+                "tumour_id": args.tumour_id
             }
 
         elif section == "wgts.snv_indel":
@@ -183,7 +188,7 @@ def createINI(args):
                 "attributes": args.attributes,
                 "maf_path": args.maf_path,
                 "oncotree_code": "N/A",
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "normal_id": args.normal_id,
                 "project": args.project,
                 "whizbam_project": args.project
@@ -195,7 +200,7 @@ def createINI(args):
                 "project": args.project,
                 "mavis_path": args.mavis_path,
                 "arriba_path": args.arriba_path,
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "oncotree_code": "N/A",
                 "whizbam_project": args.project
             }
@@ -204,8 +209,7 @@ def createINI(args):
             config[section] = {
                 "attributes": args.attributes,
                 "rsem_genes_results": args.rsem_genes_results,
-                "tumour_id": args.tumor_id,
-                "depends_configure": "case_overview"
+                "tumour_id": args.tumour_id
             }
 
         elif section == "supplement.body":
@@ -285,7 +289,7 @@ def createINI(args):
                 "oncotree_code": "N/A",
                 "assay": args.assay,
                 "cbio_id": args.cbioId,
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "normal_id": args.normal_id,
                 "maf_file": args.maf_file,
                 "maf_file_normal": args.maf_file_normal,
@@ -296,7 +300,7 @@ def createINI(args):
                 "attributes": args.attributes,
                 "donor": args.donor,
                 "oncotree_code": "N/A",
-                "tumour_id": args.tumor_id,
+                "tumour_id": args.tumour_id,
                 "seg_file": args.seg_file,
                 "plots_file": args.plots_file,
                 "clinical": "True" if args.attributes == "clinical" else "False",
@@ -328,7 +332,7 @@ if __name__ == "__main__":
     parser.add_argument("template_dir")
 
     # Shared optional arguments
-    parser.add_argument("--tumor_id")
+    parser.add_argument("--tumour_id")
     parser.add_argument("--normal_id")
     parser.add_argument("--group_id")
     parser.add_argument("--mean_coverage")

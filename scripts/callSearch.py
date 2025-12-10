@@ -83,7 +83,7 @@ def _get_callability(cache: pd.DataFrame, lims_ids: list[str]):
         return pd.DataFrame()
     else:
         call = filtered['callability'].drop_duplicates() * 100
-        call = call.round(2)
+        call = call.round(1)
 
     return call
 

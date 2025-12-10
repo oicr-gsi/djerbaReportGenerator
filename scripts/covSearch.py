@@ -84,7 +84,7 @@ if assay in ("WGTS", "WGS"):
     coverage = _get_metric(cache, lims_ids, "coverage deduplicated")
     with open("coverage.txt", "w") as f:
         if not coverage.empty:
-            coverage = coverage.round(2).astype(str)
+            coverage = coverage.round(1).astype(str)
             f.write("\n".join(coverage))
         else:
             logging.warning("No coverage data available to write for WGTS.")
