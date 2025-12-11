@@ -118,7 +118,6 @@
             "consensuscruncherFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/allUnique-hsMetrics-T.HS.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "consensuscruncherFileNormal": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/allUnique-hsMetrics-N.HS.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "mafFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02-T.merged.maf.gz","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
-            "mafFileNormal": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02-N.merged.maf.gz","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "segFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02.seg.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "plotsFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02_genomeWide_all_sols.pdf","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}
         },
