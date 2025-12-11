@@ -24,7 +24,6 @@ struct TarInput {
     File? consensuscruncherFile
     File? consensuscruncherFileNormal
     File? mafFile
-    File? mafFileNormal
     File? segFile
     File? plotsFile
 }
@@ -152,7 +151,6 @@ workflow djerbaReportGenerator {
         + (if defined(tarFiles.consensuscruncherFile) then " --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\"" else "")
         + (if defined(tarFiles.consensuscruncherFileNormal) then " --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\"" else "")
         + (if defined(tarFiles.mafFile) then " --maf_file \"~{tarFiles.mafFile}\"" else "")
-        + (if defined(tarFiles.mafFileNormal) then " --maf_file_normal \"~{tarFiles.mafFileNormal}\"" else "")
         + (if defined(tarFiles.segFile) then " --seg_file \"~{tarFiles.segFile}\"" else "")
         + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
         + " --group_id \"~{groupId}\""
@@ -330,7 +328,7 @@ task createINI {
 
     command <<<
         set -euo pipefail
-        python3 $DJERBAREPORTER_ROOT/share/makeINI.py \
+        python3 $DJERBAREPORTER_ROOT/share/createINI.py \
             ~{project} \
             ~{study} \
             ~{donor} \
