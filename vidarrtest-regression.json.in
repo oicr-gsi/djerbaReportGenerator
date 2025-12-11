@@ -12,8 +12,8 @@
         "djerbaReportGenerator.sampleNameNormal": "Test_01-02",
         "djerbaReportGenerator.sampleNameAux": "Test_01-03",
         "djerbaReportGenerator.attributes": "clinical",
-        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.3",
-        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.3/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.4",
+        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.4/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.wgtsFiles": {
             "purpleZip": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.solPrimary.purple.zip","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
             "msiFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.filter.deduped.recalibrated.msi.booted","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
@@ -111,8 +111,8 @@
         "djerbaReportGenerator.patientStudyId": "Test-02-0320",
         "djerbaReportGenerator.LimsId": ["8478_1_LDI133729"],
         "djerbaReportGenerator.attributes": "clinical",
-        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.3",
-        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.3/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.4",
+        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.4/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02_metrics.json","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "consensuscruncherFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/allUnique-hsMetrics-T.HS.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
@@ -207,8 +207,8 @@
         "djerbaReportGenerator.patientStudyId": "Test-03-VEN",
         "djerbaReportGenerator.LimsId": ["8414_1_LDI132411", "8414_2_LDI132411", "8414_3_LDI132411", "8414_4_LDI132411", "8414_5_LDI132411", "8414_6_LDI132411", "8414_7_LDI132411", "8414_8_LDI132411"],
         "djerbaReportGenerator.attributes": "clinical",
-        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.3",
-        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.3/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.4",
+        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.4/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.pwgsFiles": {
             "resultsFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test03.mrdetect.txt","externalIds": [{"id": "Test03","provider": "Test03"}]},"type":"EXTERNAL"}, 
             "vafFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test03.mrdetect.vaf.txt","externalIds": [{"id": "Test03","provider": "Test03"}]},"type":"EXTERNAL"}, 
@@ -305,8 +305,8 @@
         "djerbaReportGenerator.sampleNameNormal": "Test_01-02",
         "djerbaReportGenerator.sampleNameAux": "Test_01-03",
         "djerbaReportGenerator.attributes": "clinical",
-        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.3",
-        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.3/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+        "djerbaReportGenerator.djerbaVersion": "djerba/1.11.4",
+        "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.4/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.wgsFiles": {
             "purpleZip": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.solPrimary.purple.zip","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
             "msiFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test01.filter.deduped.recalibrated.msi.booted","externalIds": [{"id": "Test01","provider": "Test01"}]},"type":"EXTERNAL"},
