@@ -292,7 +292,6 @@ def createINI(args):
                 "tumour_id": args.tumour_id,
                 "normal_id": args.normal_id,
                 "maf_file": args.maf_file,
-                "maf_file_normal": args.maf_file_normal,
             }
 
         elif section == "tar.swgs":
@@ -354,7 +353,6 @@ if __name__ == "__main__":
     parser.add_argument("--consensuscruncher_file")
     parser.add_argument("--consensuscruncher_file_normal")
     parser.add_argument("--maf_file")
-    parser.add_argument("--maf_file_normal")
     parser.add_argument("--seg_file")
     parser.add_argument("--plots_file")
 
