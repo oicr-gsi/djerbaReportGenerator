@@ -1,12 +1,11 @@
-
-#!/usr/bin/env bash
+#!/bin/bash
 set -euo pipefail
 
 SEARCH_DIR="${1:-.}"
 
 # Find tarballs deterministically
 find "$SEARCH_DIR" -type f -name "*.tar.gz" | sort -V | while read -r tarball; do
-  mapfile -t html_paths < <(tar -tzf "$tarball" | grep -E '_report\.(research|clinical)\.html$ || true)
+  mapfile -t html_paths < <(tar -tzf "$tarball" | grep -E '_report\.(research|clinical)\.html$' || true)
 
   if [[ "${#html_paths[@]}" -eq 0 ]]; then
     echo "WARN: No *_report.research.html found in: $tarball" >&2
