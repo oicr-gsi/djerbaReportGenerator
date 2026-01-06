@@ -9,30 +9,32 @@ djerbaReportGenerator creates clinical and RUO djerba reports by generating inte
 Retrieve callability from mutectcallability qc-etl cache if assay type is WGTS or WGS
 
 ```
+    set -euo pipefail
     LimsId="~{sep=" " LimsId}"
-    callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+    python3 $DJERBAREPORTER_ROOT/share/callSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
 ```
 
 Retrieve median_insert_size and coverage_deduplicated from bamqc4merged or hsmetrics qc-etl cache depending on assay type
 
 ```
+    set -euo pipefail
     LimsId="~{sep=" " LimsId}"
-    covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+    python3 $DJERBAREPORTER_ROOT/share/covSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
 ```
 
 Create the intermediate INI file 
 
 ```
-    createINI \
-            ~{project} \
-            ~{study} \
-            ~{donor} \
-            ~{reportId} \
-            ~{assay} \
-            ~{patientStudyId} \
-            ~{meanCoverage} \
-            ~{attributes} \
-            ~{template_dir} \
+    set -euo pipefail
+        python3 $DJERBAREPORTER_ROOT/share/createINI.py \
+            --project "~{project}" \
+            --study "~{study}" \
+            --donor "~{donor}" \
+            --report_id "~{reportId}" \
+            --assay "~{assay}" \
+            --patient_study_id "~{patientStudyId}" \
+            --attributes "~{attributes}" \
+            --template_dir "~{template_dir}" \
             ~{createArgs}
 ```
 

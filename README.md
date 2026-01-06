@@ -90,37 +90,40 @@ Output | Type | Description | Labels
  Retrieve callability from mutectcallability qc-etl cache if assay type is WGTS or WGS
  
  ```
-     LimsId="~{sep=" " LimsId}"
-     callSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+    set -euo pipefail
+    LimsId="~{sep=" " LimsId}"
+    python3 $DJERBAREPORTER_ROOT/share/callSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
  ```
  
  Retrieve median_insert_size and coverage_deduplicated from bamqc4merged or hsmetrics qc-etl cache depending on assay type
  
  ```
-     LimsId="~{sep=" " LimsId}"
-     covSearch --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+    set -euo pipefail
+    LimsId="~{sep=" " LimsId}"
+    python3 $DJERBAREPORTER_ROOT/share/covSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
  ```
  
  Create the intermediate INI file 
  
  ```
-     createINI \
-             ~{project} \
-             ~{study} \
-             ~{donor} \
-             ~{reportId} \
-             ~{assay} \
-             ~{patientStudyId} \
-             ~{meanCoverage} \
-             ~{attributes} \
-             ~{template_dir} \
-             ~{createArgs}
+    set -euo pipefail
+    python3 $DJERBAREPORTER_ROOT/share/createINI.py \
+        --project "~{project}" \
+        --study "~{study}" \
+        --donor "~{donor}" \
+        --report_id "~{reportId}" \
+        --assay "~{assay}" \
+        --patient_study_id "~{patientStudyId}" \
+        --attributes "~{attributes}" \
+        --template_dir "~{template_dir}" \
+        ~{createArgs}
  ```
  
  Create sample_info.json and provenanve_subset.tsv.gz file if assay type is WGS or WGTS
  
  ```
- cat <<EOF > sample_info.json
+    set -euo pipefail
+    cat <<EOF > sample_info.json
          {
          "project": "~{project}",
          "donor": "~{donor}",
@@ -133,8 +136,8 @@ Output | Type | Description | Labels
          }
      EOF
  
- cat <<EOF > provenance_subset.tsv.gz
- EOF
+    cat <<EOF > provenance_subset.tsv.gz
+    EOF
  ```
  
  Run Djerba
