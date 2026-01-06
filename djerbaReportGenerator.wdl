@@ -329,14 +329,14 @@ task createINI {
     command <<<
         set -euo pipefail
         python3 $DJERBAREPORTER_ROOT/share/createINI.py \
-            ~{project} \
-            ~{study} \
-            ~{donor} \
-            ~{reportId} \
-            ~{assay} \
-            ~{patientStudyId} \
-            ~{attributes} \
-            ~{template_dir} \
+            --project ~{project} \
+            --study ~{study} \
+            --donor ~{donor} \
+            --report_id ~{reportId} \
+            --assay ~{assay} \
+            --patient_study_id ~{patientStudyId} \
+            --attributes ~{attributes} \
+            --template_dir ~{template_dir} \
             ~{createArgs}
     >>>
 

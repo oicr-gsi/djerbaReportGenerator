@@ -321,14 +321,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate Djerba report config using positional arguments.")
 
     # Common
-    parser.add_argument("project")
-    parser.add_argument("study")
-    parser.add_argument("donor")
-    parser.add_argument("report_id")
-    parser.add_argument("assay")
-    parser.add_argument("patient_study_id")
-    parser.add_argument("attributes")
-    parser.add_argument("template_dir")
+    parser.add_argument("--project")
+    parser.add_argument("--study")
+    parser.add_argument("--donor")
+    parser.add_argument("--report_id")
+    parser.add_argument("--assay")
+    parser.add_argument("--patient_study_id")
+    parser.add_argument("--attributes")
+    parser.add_argument("--template_dir")
 
     # Shared optional arguments
     parser.add_argument("--tumour_id")
