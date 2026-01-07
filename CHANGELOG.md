@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.5] - 2026-01-06
+## [2.0.5] - 2026-01-07
 ### Changed
-- Modified the workflow to support RUO report generation 
+- Modified the workflow to support RUO report generation
+- Updated djerba version from 1.11.4 to 1.11.5 
 
 ## [2.0.4] - 2025-12-10
 ### Changed
