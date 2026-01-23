@@ -77,6 +77,9 @@ def createINI(args):
         logging.warning(f"Unsupported assay type: {assay}")
         sys.exit(1)
 
+    if args.attributes == "research":
+        sections = [s for s in sections if s != "treatment_options_merger"]
+
     for section in sections:
         config.add_section(section)
 
@@ -231,16 +234,29 @@ def createINI(args):
             config[section] = {"attributes": args.attributes}
 
         elif section == "patient_info":
-            config[section] = {
-                "attributes": args.attributes,
-                "patient_name": "LAST, FIRST",
-                "patient_dob": "YYYY-MM-DD",
-                "patient_genetic_sex": "SEX",
-                "requisitioner_email": "NAME@domain.com",
-                "physician_licence_number": "nnnnnnnn",
-                "physician_name": "LAST, FIRST",
-                "physician_phone_number": "nnn-nnn-nnnn",
-                "hospital_name_and_address": "HOSPITAL NAME AND ADDRESS"
+            if args.attributes == "research":
+                config[section] = {
+                    "attributes": args.attributes,
+                    "patient_name": "Not available for research",
+                    "patient_dob": "YYYY-MM-DD",
+                    "patient_genetic_sex": "Not available for research",
+                    "requisitioner_email": "NAME@domain.com",
+                    "physician_licence_number": "Not available for research",
+                    "physician_name": "Not available for research",
+                    "physician_phone_number": "Not available for research",
+                    "hospital_name_and_address": "Not available for research"
+                }
+            else:
+                config[section] = {
+                    "attributes": args.attributes,
+                    "patient_name": "LAST, FIRST",
+                    "patient_dob": "YYYY-MM-DD",
+                    "patient_genetic_sex": "SEX",
+                    "requisitioner_email": "NAME@domain.com",
+                    "physician_licence_number": "nnnnnnnn",
+                    "physician_name": "LAST, FIRST",
+                    "physician_phone_number": "nnn-nnn-nnnn",
+                    "hospital_name_and_address": "HOSPITAL NAME AND ADDRESS"
             }
 
         elif section == "treatment_options_merger":
