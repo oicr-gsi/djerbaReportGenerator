@@ -452,10 +452,16 @@ task runDjerba {
         #Run blurbomatic
         if [[ "~{attributes}" == "research" ]]; then
             echo "Results summary provided after review of clinical reports. Not available for RUO reports" > ~{Prefix}/results_summary.txt
+            if [[ ~{assay} == "WGTS" || ~{assay} == "WGS" ]]; then
+                python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
+            fi
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
         fi
 
-        python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
-        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
+        if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
+            python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{Prefix}_report.json > ~{Prefix}/results_summary.txt
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{Prefix}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
+        fi
 
         #Copy .ini file into final output directory
         cp -L -- "~{iniFile}" "~{Prefix}/djerba_input.ini"
