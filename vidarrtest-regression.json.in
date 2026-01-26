@@ -205,7 +205,7 @@
         "djerbaReportGenerator.groupId": "Test-03BL-PLAS",
         "djerbaReportGenerator.patientStudyId": "Test-03-VEN",
         "djerbaReportGenerator.LimsId": ["8414_1_LDI132411", "8414_2_LDI132411", "8414_3_LDI132411", "8414_4_LDI132411", "8414_5_LDI132411", "8414_6_LDI132411", "8414_7_LDI132411", "8414_8_LDI132411"],
-        "djerbaReportGenerator.attributes": "research",
+        "djerbaReportGenerator.attributes": "clinical",
         "djerbaReportGenerator.djerbaVersion": "djerba/1.11.5",
         "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.5/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.pwgsFiles": {
