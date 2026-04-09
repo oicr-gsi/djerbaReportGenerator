@@ -3,7 +3,6 @@ version 1.0
 struct WgtsInput {
     File? purpleZip
     File? msiFile
-    File? ctdnaFile
     File? hrdPath
     File? mafPath
     File? mavisPath
@@ -14,7 +13,6 @@ struct WgtsInput {
 struct WgsInput {
     File? purpleZip
     File? msiFile
-    File? ctdnaFile
     File? hrdPath
     File? mafPath
 }
@@ -103,11 +101,11 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
             },
             {
-                name: "gsi-qc-etl/1.38",
+                name: "gsi-qc-etl/1.44",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
-                name: "djerba/1.11.1",
+                name: "djerba/1.11.10",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -158,7 +156,6 @@ workflow djerbaReportGenerator {
         "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
         + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
         + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
-        + (if defined(wgtsFiles.ctdnaFile) then " --ctdna_file \"~{wgtsFiles.ctdnaFile}\"" else "")
         + (if defined(wgtsFiles.hrdPath) then " --hrd_path \"~{wgtsFiles.hrdPath}\"" else "")
         + (if defined(wgtsFiles.mafPath) then " --maf_path \"~{wgtsFiles.mafPath}\"" else "")
         + (if defined(wgtsFiles.mavisPath) then " --mavis_path \"~{wgtsFiles.mavisPath}\"" else "")
@@ -169,7 +166,6 @@ workflow djerbaReportGenerator {
         "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
         + (if defined(wgsFiles.purpleZip) then " --purple_zip \"~{wgsFiles.purpleZip}\"" else "")
         + (if defined(wgsFiles.msiFile) then " --msi_file \"~{wgsFiles.msiFile}\"" else "")
-        + (if defined(wgsFiles.ctdnaFile) then " --ctdna_file \"~{wgsFiles.ctdnaFile}\"" else "")
         + (if defined(wgsFiles.hrdPath) then " --hrd_path \"~{wgsFiles.hrdPath}\"" else "")
         + (if defined(wgsFiles.mafPath) then " --maf_path \"~{wgsFiles.mafPath}\"" else "")
         + " --callability \"~{queryCallability.callability}\"" 
@@ -225,7 +221,7 @@ task queryCallability {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.38"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -262,7 +258,7 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.38"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44"
         Int timeout = 5
         Int jobMemory = 12
     }

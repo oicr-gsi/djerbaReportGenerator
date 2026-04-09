@@ -355,7 +355,6 @@ if __name__ == "__main__":
     # WGTS-specific
     parser.add_argument("--purple_zip")
     parser.add_argument("--msi_file")
-    parser.add_argument("--ctdna_file")
     parser.add_argument("--hrd_path")
     parser.add_argument("--maf_path")
     parser.add_argument("--mavis_path")

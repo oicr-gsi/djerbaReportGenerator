@@ -8,8 +8,8 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 
 * [djerbareporter 1.0.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads)
 * [pandas 2.1.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads)
-* [gsi-qc-etl 1.38](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads)
-* [djerba 1.11.1](https://github.com/oicr-gsi/djerba)
+* [gsi-qc-etl 1.44](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads)
+* [djerba 1.11.10](https://github.com/oicr-gsi/djerba)
 
 
 ## Usage
@@ -57,10 +57,10 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"djerbareporter/1.0.0 gsi-qc-etl/1.38"|Name and version of module to be loaded
+`queryCallability.modules`|String|"djerbareporter/1.0.0 gsi-qc-etl/1.44"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"djerbareporter/1.0.0 gsi-qc-etl/1.38"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"djerbareporter/1.0.0 gsi-qc-etl/1.44"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
 `createINI.modules`|String|"djerbareporter/1.0.0"|Name and version of module to be loaded
