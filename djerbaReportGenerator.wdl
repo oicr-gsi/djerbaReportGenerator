@@ -105,6 +105,10 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
             },
             {
+                name: "python/3.10.6",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/20_python.yaml?ref_type=heads"
+            },
+            {
                 name: "djerba/1.11.10",
                 url: "https://github.com/oicr-gsi/djerba"
             }
@@ -221,7 +225,7 @@ task queryCallability {
         Array[String] LimsId
         String activeCache
         String archivalCache
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44 python/3.10.6"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -258,7 +262,7 @@ task queryCoverage {
         String activeCache
         String archivalCache
         String assay
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44"
+        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44 python/3.10.6"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -302,7 +306,7 @@ task createINI {
         String attributes
         String template_dir
         String createArgs 
-        String modules = "djerbareporter/1.0.0"
+        String modules = "djerbareporter/1.0.0 python/3.10.6"
         Int timeout = 4
         Int jobMemory = 2
     }
@@ -405,7 +409,7 @@ task runDjerba {
         File? sampleInfo
         File? provenanceSubset
         String djerbaVersion
-        String modules = "djerbareporter/1.0.0 ~{djerbaVersion}" 
+        String modules = "djerbareporter/1.0.0 ~{djerbaVersion} python/3.10.6" 
         Int timeout = 10
         Int jobMemory = 25
     }
