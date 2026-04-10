@@ -141,7 +141,6 @@ def createINI(args):
                 "tumour_id": args.tumour_id,
                 "oncotree_code": "N/A",
                 "msi_file": args.msi_file,
-                "ctdna_file": args.ctdna_file,
                 "hrd_path": args.hrd_path,
                 "sample_type": "N/A",
                 "clinical": "False",
