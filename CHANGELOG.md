@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.8] - 2026-04-13
 ### Changed
 - Removed requirement for ctdna_file from mrdetect_filter_only workflow
+- Removed hsmetrics files since coverage is directly being queried from the cache now
 
 ## [2.0.7] - 2026-01-29
 ### Changed
