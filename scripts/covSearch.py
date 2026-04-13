@@ -145,7 +145,7 @@ elif assay == "TAR":
             collapsed_cov = collapsed_cov.astype(int).astype(str)
             val.extend(collapsed_cov.tolist())
         else:
-            logging.warning("No collapsed coverage data available for TAR.")
+            logging.warning("No collapsed coverage data available for this case")
             val.append("0")
 
         f.write("\n".join(val))
