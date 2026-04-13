@@ -120,19 +120,35 @@ elif assay == "PWGS":
             f.write("0")  
 
 elif assay == "TAR":
-    cache = _load_cache(
+    cache_raw = _load_cache(
         etl_caches, "hsmetrics", "metrics",
         gsiqcetl.column.HsMetricsColumn.MergedPineryLimsID,
         merged=True
     )
-    coverage = _get_metric(cache, lims_ids, "MEAN_BAIT_COVERAGE")
+    raw_cov = _get_metric(cache_raw, lims_ids, "MEAN_BAIT_COVERAGE")
+    cache_collapsed = _load_cache(
+        etl_caches, "hsmetrics_umiconsensus", "metrics",
+        gsiqcetl.column.HsMetricsColumn.MergedPineryLimsID,
+        merged=True
+    )
+    collapsed_cov = _get_metric(cache_collapsed, lims_ids, "MEAN_BAIT_COVERAGE")
     with open("coverage.txt", "w") as f:
-        if not coverage.empty:
-            coverage = coverage.astype(int).astype(str)
-            f.write("\n".join(coverage))
+        val = []
+        if not raw_cov.empty:
+            raw_cov = raw_cov.astype(int).astype(str)
+            val.extend(raw_cov.tolist())
         else:
-            logging.warning("No coverage data available to write for TAR.")
-            f.write("0")  
+            logging.warning("No raw coverage data available for this case")
+            val.append("0")
+
+        if not collapsed_cov.empty:
+            collapsed_cov = collapsed_cov.astype(int).astype(str)
+            val.extend(collapsed_cov.tolist())
+        else:
+            logging.warning("No collapsed coverage data available for TAR.")
+            val.append("0")
+
+        f.write("\n".join(val))
     with open("insertsize.txt", "w") as f:
         f.write("")
         logging.info("Created empty insertsize.txt for TAR assay.")

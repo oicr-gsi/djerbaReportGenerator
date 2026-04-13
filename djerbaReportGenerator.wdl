@@ -19,8 +19,6 @@ struct WgsInput {
 
 struct TarInput {
     File? ichorcnaFile
-    File? consensuscruncherFile
-    File? consensuscruncherFileNormal
     File? mafFile
     File? segFile
     File? plotsFile
@@ -150,8 +148,6 @@ workflow djerbaReportGenerator {
     else if assay == "TAR" then
         "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
         + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
-        + (if defined(tarFiles.consensuscruncherFile) then " --consensuscruncher_file \"~{tarFiles.consensuscruncherFile}\"" else "")
-        + (if defined(tarFiles.consensuscruncherFileNormal) then " --consensuscruncher_file_normal \"~{tarFiles.consensuscruncherFileNormal}\"" else "")
         + (if defined(tarFiles.mafFile) then " --maf_file \"~{tarFiles.mafFile}\"" else "")
         + (if defined(tarFiles.segFile) then " --seg_file \"~{tarFiles.segFile}\"" else "")
         + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
@@ -206,6 +202,7 @@ workflow djerbaReportGenerator {
     call runDjerba {
         input:
             assay = assay,
+            project = project,
             attributes = attributes,
             Prefix = outputFileNamePrefix,
             reportId = reportId,
@@ -403,6 +400,7 @@ task runDjerba {
     input {
         String Prefix
         String assay
+        String project
         String attributes
         String reportId
         File iniFile
@@ -417,6 +415,7 @@ task runDjerba {
     parameter_meta {
         Prefix: "Prefix for the output files"
         assay: "Name of assay"
+        project: "Name of the project"
         attributes: "research or clinical"
         reportId: "Report identifier"
         iniFile: "The INI input for Djerba"
@@ -452,6 +451,11 @@ task runDjerba {
         #Run blurbomatic
         if [[ "~{attributes}" == "research" ]]; then
             echo "Results summary provided after review of clinical reports. Not available for RUO reports" > ~{Prefix}/results_summary.txt
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
+        fi
+
+        if [[ "~{attributes}" == "clinical" && "~{assay}" == "TAR" && "~{project}" == "CHARM2PLAS" ]]; then
+            echo "The patient has been referred for the OICR Genomics targeted sequencing REVOLVE assay for early cancer detection through the CHARM2 study. The requisitioners provided one variant known from previous genetic testing which overlaps with the REVOLVE panel: ...... This mutation was confirmed as likely germline and there were no additional somatic mutations identified/Large deletions or duplications are not readily detected by this test/The HGVS cDNA nomenclature and reference sequence were not provided, so we could neither confirm nor refute the presence of the specified variant..." > ~{Prefix}/results_summary.txt
             $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
         fi
 

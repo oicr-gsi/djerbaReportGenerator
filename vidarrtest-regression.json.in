@@ -38,8 +38,6 @@
         },
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": null,
-            "consensuscruncherFile": null,
-            "consensuscruncherFileNormal": null,
             "mafFile": null,
             "mafFileNormal": null,
             "segFile": null,
@@ -113,8 +111,6 @@
         "djerbaReportGenerator.templateDir": "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.11.10/lib/python3.10/site-packages/djerba/plugins/supplement/body",
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02_metrics.json","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
-            "consensuscruncherFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/allUnique-hsMetrics-T.HS.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
-            "consensuscruncherFileNormal": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/allUnique-hsMetrics-N.HS.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "mafFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02-T.merged.maf.gz","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "segFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02.seg.txt","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}, 
             "plotsFile": {"contents":{"configuration": "/.mounts/labs/gsi/testdata/DjerbaReportGenerator/test_inputs/Test02_genomeWide_all_sols.pdf","externalIds": [{"id": "Test02","provider": "Test02"}]},"type":"EXTERNAL"}
@@ -228,8 +224,6 @@
         },
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": null,
-            "consensuscruncherFile": null,
-            "consensuscruncherFileNormal": null,
             "mafFile": null,
             "mafFileNormal": null,
             "segFile": null,
@@ -324,8 +318,6 @@
         },
         "djerbaReportGenerator.tarFiles": {
             "ichorcnaFile": null,
-            "consensuscruncherFile": null,
-            "consensuscruncherFileNormal": null,
             "mafFile": null,
             "mafFileNormal": null,
             "segFile": null,

@@ -78,7 +78,7 @@ def createINI(args):
         sys.exit(1)
 
     if args.attributes == "research":
-        sections = [s for s in sections if s != "treatment_options_merger"]
+        sections = [s for s in sections if s not in ("treatment_options_merger", "patient_info")]
 
     for section in sections:
         config.add_section(section)
@@ -274,6 +274,9 @@ def createINI(args):
             }
 
         elif section == "tar.sample":
+            coverage = args.mean_coverage.strip().split("\n")
+            raw_cov = coverage[0] if len(coverage) > 0 else "0"
+            collapsed_cov = coverage[1] if len(coverage) > 1 else "0"
             config[section] = {
                 "attributes": args.attributes,
                 "group_id": args.group_id,
@@ -281,9 +284,8 @@ def createINI(args):
                 "known_variants": "N/A",
                 "sample_type": "N/A",
                 "ichorcna_file": args.ichorcna_file,
-                "consensus_cruncher_file": args.consensuscruncher_file,
-                "consensus_cruncher_file_normal": args.consensuscruncher_file_normal,
-                "raw_coverage": args.mean_coverage
+                "raw_coverage": raw_cov,
+                "collapsed_coverage": collapsed_cov
             }
         
         elif section == "pwgs.sample":
@@ -364,8 +366,6 @@ if __name__ == "__main__":
     # TAR-specific
     parser.add_argument("--cbioId")
     parser.add_argument("--ichorcna_file")
-    parser.add_argument("--consensuscruncher_file")
-    parser.add_argument("--consensuscruncher_file_normal")
     parser.add_argument("--maf_file")
     parser.add_argument("--seg_file")
     parser.add_argument("--plots_file")
