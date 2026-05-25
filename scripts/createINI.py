@@ -78,7 +78,7 @@ def createINI(args):
         sys.exit(1)
 
     if args.attributes == "research":
-        sections = [s for s in sections if s not in ("treatment_options_merger", "patient_info")]
+        sections = [s for s in sections if s not in ("treatment_options_merger", "patient_info", "report_title")]
 
     for section in sections:
         config.add_section(section)
@@ -111,9 +111,9 @@ def createINI(args):
                 "project": args.project,
                 "requisition_approved": "2025-01-01",
                 "requisition_id": re.sub(r'-v1$', '', args.report_id),
-                "sample_type": "N/A",
-                "site_of_biopsy": "N/A",
-                "study": args.study,
+                "sample_type": "cfDNA" if args.project == "CHARM2PLAS" else "N/A",
+                "site_of_biopsy": "cfDNA" if args.project == "CHARM2PLAS" else "N/A",
+                "study": "CHARM2" if args.project == "CHARM2PLAS" else args.study,
                 "tumour_id": args.tumour_id,
                 "attributes": args.attributes,
             }
@@ -233,29 +233,16 @@ def createINI(args):
             config[section] = {"attributes": args.attributes}
 
         elif section == "patient_info":
-            if args.attributes == "research":
-                config[section] = {
-                    "attributes": args.attributes,
-                    "patient_name": "Not available for research",
-                    "patient_dob": "YYYY-MM-DD",
-                    "patient_genetic_sex": "Not available for research",
-                    "requisitioner_email": "NAME@domain.com",
-                    "physician_licence_number": "Not available for research",
-                    "physician_name": "Not available for research",
-                    "physician_phone_number": "Not available for research",
-                    "hospital_name_and_address": "Not available for research"
-                }
-            else:
-                config[section] = {
-                    "attributes": args.attributes,
-                    "patient_name": "LAST, FIRST",
-                    "patient_dob": "YYYY-MM-DD",
-                    "patient_genetic_sex": "SEX",
-                    "requisitioner_email": "NAME@domain.com",
-                    "physician_licence_number": "nnnnnnnn",
-                    "physician_name": "LAST, FIRST",
-                    "physician_phone_number": "nnn-nnn-nnnn",
-                    "hospital_name_and_address": "HOSPITAL NAME AND ADDRESS"
+            config[section] = {
+                "attributes": args.attributes,
+                "patient_name": "LAST, FIRST",
+                "patient_dob": "YYYY-MM-DD",
+                "patient_genetic_sex": "SEX",
+                "requisitioner_email": "NAME@domain.com",
+                "physician_licence_number": "nnnnnnnn",
+                "physician_name": "LAST, FIRST",
+                "physician_phone_number": "nnn-nnn-nnnn",
+                "hospital_name_and_address": "HOSPITAL NAME AND ADDRESS"
             }
 
         elif section == "treatment_options_merger":
