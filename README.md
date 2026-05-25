@@ -176,8 +176,8 @@ Output | Type | Description | Labels
     fi
 
     if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
-        python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{Prefix}_report.json > ~{Prefix}/results_summary.txt
-        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{Prefix}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
+        python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
+        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
     fi
 
     #Copy .ini file into final output directory

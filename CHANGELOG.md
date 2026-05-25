@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.9] - 2026-05-25
+### Changed
+- Fixed an error with result_summary update for WGTS/WGS assay. 
+- Fixed RUO Header 
+- Modified sample_type, site_of_biopsy and study for CHARM2 TAR
+- Modified QC-ETL archival cache path
+
 ## [2.0.8] - 2026-04-13
 ### Changed
 - Removed requirement for ctdna_file from mrdetect_filter_only workflow
