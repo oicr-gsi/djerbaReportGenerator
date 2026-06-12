@@ -242,7 +242,7 @@ def createINI(args):
                 "physician_licence_number": "nnnnnnnn",
                 "physician_name": "LAST, FIRST",
                 "physician_phone_number": "nnn-nnn-nnnn",
-                "hospital_name_and_address": "HOSPITAL NAME AND ADDRESS"
+                "hospital_name_and_address": "HOSPITAL NAME"
             }
 
         elif section == "treatment_options_merger":
