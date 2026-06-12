@@ -9,7 +9,7 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 * [djerbareporter 1.0.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads)
 * [pandas 2.1.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads)
 * [gsi-qc-etl 1.44](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads)
-* [djerba 1.11.10](https://github.com/oicr-gsi/djerba)
+* [djerba 1.11.12](https://github.com/oicr-gsi/djerba)
 * [python 3.10.6](https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/20_python.yaml?ref_type=heads)
 
 
