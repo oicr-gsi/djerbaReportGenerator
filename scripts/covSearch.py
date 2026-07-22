@@ -1,157 +1,63 @@
-from gsiqcetl import QCETLMultiCache
-import gsiqcetl.column
 import argparse
+import json
 import logging
-import pandas as pd
+from common import fetch_case, get_full_depth_samples, filter_tumor_samples, get_metric_values, get_paired_metric_values
 
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 
-# Argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument("--gsiqcetl-dir", action="append", required=True,
-                    help="Path(s) to GSI-QC-ETL directories.")
-parser.add_argument("--lims-id", nargs="+", required=True,
-                    help="List of LIMS IDs to search for.")
-parser.add_argument("--assay", type=str, required=True,
-                    help="Assay type: WGTS, WGS, PWGS, or TAR.")
+parser.add_argument("--case-id", required=True, help="Cardea case ID to query.")
+parser.add_argument("--assay", type=str, required=True, help="Assay type: WGTS, WGS, PWGS, or TAR.")
+parser.add_argument("--base-url", default="https://cardea.gsi.oicr.on.ca")
 args = parser.parse_args()
 
-# Flatten any nested LIMS IDs (e.g., [['ABC123']] -> ['ABC123'])
-def _flatten_lims_ids(lims_ids):
-    flat = []
-    for item in lims_ids:
-        if isinstance(item, list):
-            flat.extend(item)
-        else:
-            flat.append(item)
-    return [str(i) for i in flat]
-
-lims_ids = _flatten_lims_ids(args.lims_id)
 assay = args.assay.upper()
-gsiqcetl_dirs = args.gsiqcetl_dir
 
-# Load ETL caches
-etl_caches = QCETLMultiCache(gsiqcetl_dirs)
+case_json = fetch_case(args.case_id, args.base_url)
+all_samples = get_full_depth_samples(case_json)
+samples = filter_tumor_samples(all_samples, tumor_only=True)
 
-def _load_cache(etl_caches, cache_version, cache_name, id_column, merged=False):
-    try:
-        version = etl_caches.load_same_version(cache_version).remove_missing(cache_name)
-        cache = version.unique(cache_name)
-        if id_column not in cache:
-            logging.warning(f"'{id_column}' column not found in cache: {cache_name}.{cache_version}")
-            return pd.DataFrame()
-        if merged:
-            single_id_column = "Pinery Lims ID"
-            cache[single_id_column] = cache[id_column]
-            cache = cache.explode(single_id_column)
-        else:
-            single_id_column = id_column
-        cache.set_index(single_id_column, inplace=True, drop=False)
-        cache.sort_index(inplace=True)
-        return cache
-    except Exception:
-        logging.exception(f"Failed to load cache: {cache_version}.{cache_name}")
-        return pd.DataFrame()
+# Always emit all four keys so downstream Map[String, String] access never
+# fails on a missing key, regardless of which assay branch actually populated them.
+result = {
+    "meanCoverage": "",
+    "medianInsertSize": "",
+    "rawCoverage": "",
+    "collapsedCoverage": "",
+}
 
-def _get_metric(cache: pd.DataFrame, lims_ids: list[str], column_name: str):
-    if not lims_ids:
-        logging.warning("No LIMS IDs provided.")
-        return pd.DataFrame()
-
-    lims_ids = [str(i) for i in lims_ids]
-    filtered = cache.loc[cache.index.intersection(lims_ids)]
-
-    if filtered.empty:
-        logging.warning("No matching LIMS IDs found.")
-        return pd.DataFrame()
-
-    tumor = filtered[filtered['Tissue Type'] != 'R']
-    if tumor.empty:
-        logging.warning("No tumor samples found.")
-        return pd.DataFrame()
-
-    values = tumor[column_name].drop_duplicates()
-    return values
-
-# Assay-specific logic
 if assay in ("WGTS", "WGS"):
-    cache = _load_cache(
-        etl_caches, "bamqc4merged", "bamqc4merged",
-        gsiqcetl.column.BamQc4MergedColumn.MergedPineryLimsID,
-        merged=True
-    )
-    coverage = _get_metric(cache, lims_ids, "coverage deduplicated")
-    with open("coverage.txt", "w") as f:
-        if not coverage.empty:
-            coverage = coverage.round(1).astype(str)
-            f.write("\n".join(coverage))
-        else:
-            logging.warning("No coverage data available to write for WGTS.")
-            f.write("0")  
-    with open("insertsize.txt", "w") as f:
-        f.write("")
-        logging.info("Created empty insertsize.txt for WGTS assay.")
+    coverage = get_metric_values(samples, "Mean Coverage Deduplicated")
+    if coverage:
+        result["meanCoverage"] = str(round(coverage[0], 1))
+    else:
+        logging.warning("No coverage data available for WGTS/WGS.")
+        result["meanCoverage"] = "0"
 
 elif assay == "PWGS":
-    cache = _load_cache(
-        etl_caches, "bamqc4merged", "bamqc4merged",
-        gsiqcetl.column.BamQc4MergedColumn.MergedPineryLimsID,
-        merged=True
-    )
-    # Coverage
-    coverage = _get_metric(cache, lims_ids, "coverage deduplicated")
-    with open("coverage.txt", "w") as f:
-        if not coverage.empty:
-            coverage = coverage.astype(int).astype(str)
-            f.write("\n".join(coverage))
-        else:
-            logging.warning("No coverage data available to write for PWGS.")
-            f.write("0")  
-
-    # Insert size
-    insert_size = _get_metric(cache, lims_ids, "insert size median")
-    with open("insertsize.txt", "w") as f:
-        if not insert_size.empty:
-            insert_size = insert_size.astype(int).astype(str)
-            f.write("\n".join(insert_size))
-        else:
-            logging.warning("No insert size data available to write for PWGS.")
-            f.write("0")  
+    pairs = get_paired_metric_values(samples, "Mean Coverage Deduplicated", "Mean Insert Size")
+    if pairs:
+        coverage_val, insert_size_val = pairs[0]
+        result["meanCoverage"] = str(int(coverage_val))
+        result["medianInsertSize"] = str(int(insert_size_val))
+    else:
+        logging.warning("No sample with both coverage and insert size passing QC found for this case")
+        result["meanCoverage"] = "0"
+        result["medianInsertSize"] = "0"
 
 elif assay == "TAR":
-    cache_raw = _load_cache(
-        etl_caches, "hsmetrics", "metrics",
-        gsiqcetl.column.HsMetricsColumn.MergedPineryLimsID,
-        merged=True
-    )
-    raw_cov = _get_metric(cache_raw, lims_ids, "MEAN_BAIT_COVERAGE")
-    cache_collapsed = _load_cache(
-        etl_caches, "hsmetrics_umiconsensus", "metrics",
-        gsiqcetl.column.HsMetricsColumn.MergedPineryLimsID,
-        merged=True
-    )
-    collapsed_cov = _get_metric(cache_collapsed, lims_ids, "MEAN_BAIT_COVERAGE")
-    with open("coverage.txt", "w") as f:
-        val = []
-        if not raw_cov.empty:
-            raw_cov = raw_cov.astype(int).astype(str)
-            val.extend(raw_cov.tolist())
-        else:
-            logging.warning("No raw coverage data available for this case")
-            val.append("0")
-
-        if not collapsed_cov.empty:
-            collapsed_cov = collapsed_cov.astype(int).astype(str)
-            val.extend(collapsed_cov.tolist())
-        else:
-            logging.warning("No collapsed coverage data available for this case")
-            val.append("0")
-
-        f.write("\n".join(val))
-    with open("insertsize.txt", "w") as f:
-        f.write("")
-        logging.info("Created empty insertsize.txt for TAR assay.")
+    pairs = get_paired_metric_values(samples, "Mean Bait Coverage", "Collapsed Coverage")
+    if pairs:
+        raw_val, collapsed_val = pairs[0]
+        result["rawCoverage"] = str(int(raw_val))
+        result["collapsedCoverage"] = str(int(collapsed_val))
+    else:
+        logging.warning("No sample with both raw and collapsed coverage passing QC found for this case")
+        result["rawCoverage"] = "0"
+        result["collapsedCoverage"] = "0"
 
 else:
     raise ValueError(f"Unsupported assay: {assay}")
+
+with open("result.json", "w") as f:
+    json.dump(result, f)
