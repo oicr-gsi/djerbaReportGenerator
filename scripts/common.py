@@ -7,9 +7,9 @@ DEFAULT_BASE_URL = "https://cardea.gsi.oicr.on.ca"
 def fetch_case(case_id, base_url=DEFAULT_BASE_URL):
     url = f"{base_url}/cases/{case_id}"
     try:
-        resp = requests.get(url, timeout=30)
-        resp.raise_for_status()
-        return resp.json()
+        res = requests.get(url, timeout=30)
+        res.raise_for_status()
+        return res.json()
     except Exception:
         logging.exception(f"Failed to fetch case {case_id} from {url}")
         return {}
@@ -33,8 +33,8 @@ def filter_tumor_samples(samples, tumor_only=True):
 
 def get_metric_values(samples, metric_name, metric_level="SAMPLE"):
     """Search each sample's metrics[] for entries matching metric_name
-    (case-insensitive) that passed QC, and return de-duplicated values."""
-    seen = set()
+    that passed QC, and return values."""
+    output = set()
     values = []
     for s in samples:
         for m in s.get("metrics") or []:
@@ -45,21 +45,21 @@ def get_metric_values(samples, metric_name, metric_level="SAMPLE"):
             if m.get("qcPassed") is not True:
                 continue
             v = m.get("value")
-            if v is None or v in seen:
+            if v is None or v in output:
                 continue
-            seen.add(v)
+            output.add(v)
             values.append(v)
     return values
 
 def get_paired_metric_values(samples, metric_name_a, metric_name_b, metric_level="SAMPLE"):
-    """Return (value_a, value_b) pairs only from samples where BOTH named
+    """Return (value_a, value_b) pairs only from samples where both named
     metrics are present and passed QC on that same sample. This avoids
     pairing a passed value for one metric with a passed value for the
     other metric from a different sample."""
     name_a = metric_name_a.strip().lower()
     name_b = metric_name_b.strip().lower()
 
-    seen = set()
+    output = set()
     pairs = []
     for s in samples:
         val_a = pass_a = val_b = pass_b = None
@@ -80,9 +80,9 @@ def get_paired_metric_values(samples, metric_name_a, metric_name_b, metric_level
             continue
 
         key = (val_a, val_b)
-        if key in seen:
+        if key in output:
             continue
-        seen.add(key)
+        output.add(key)
         pairs.append(key)
 
     return pairs
