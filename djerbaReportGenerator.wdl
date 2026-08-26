@@ -87,23 +87,15 @@ workflow djerbaReportGenerator {
         description: "Given metrics, the workflow will create an intermediate INI file and run djerba to generate Clinical and RUO reports."
         dependencies: [
             {
-                name: "djerbareporter/1.0.1",
+                name: "djerbareporter/2.0.0",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
-                name: "pandas/2.1.3",
+                name: "python/3.13.0",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
-                name: "python/3.10.6",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
-            },
-            {
-                name: "cromwell-tools/2.0",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
-            },
-            {
-                name: "djerba/1.12.0",
+                name: "djerba/1.13.0",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -175,7 +167,7 @@ workflow djerbaReportGenerator {
             assay = assay,
             patientStudyId = patientStudyId,
             attributes = attributes,
-            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.12.0/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.13.0/lib/python3.10/site-packages/djerba/plugins/supplement/body",
             createArgs = create_ini_args
     }
 
@@ -213,7 +205,7 @@ workflow djerbaReportGenerator {
 task queryCallability {
     input {
         String CaseId
-        String modules = "djerbareporter/1.0.1"
+        String modules = "djerbareporter/2.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -245,7 +237,7 @@ task queryCoverage {
     input {
         String CaseId
         String assay
-        String modules = "djerbareporter/1.0.1"
+        String modules = "djerbareporter/2.0.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -285,7 +277,7 @@ task createINI {
         String attributes
         String createArgs 
         String template_dir
-        String modules = "djerbareporter/1.0.1"
+        String modules = "djerbareporter/2.0.0"
         Int timeout = 4
         Int jobMemory = 2
     }
@@ -388,7 +380,7 @@ task runDjerba {
         File iniFile
         File? sampleInfo
         File? provenanceSubset
-        String modules = "djerbareporter/1.0.1 djerba/1.12.0" 
+        String modules = "djerbareporter/2.0.0 djerba/1.13.0" 
         Int timeout = 10
         Int jobMemory = 25
     }

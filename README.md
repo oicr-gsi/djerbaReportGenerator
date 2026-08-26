@@ -6,11 +6,9 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 
 ## Dependencies
 
-* [djerbareporter 1.0.1](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
-* [pandas 2.1.3](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
-* [python 3.10.6](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
-* [cromwell-tools 2.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
-* [djerba 1.12.0](https://github.com/oicr-gsi/djerba)
+* [djerbareporter 2.0.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
+* [python 3.13.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
+* [djerba 1.13.0](https://github.com/oicr-gsi/djerba)
 
 
 ## Usage
@@ -56,16 +54,16 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"djerbareporter/1.0.1"|Name and version of module to be loaded
+`queryCallability.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"djerbareporter/1.0.1"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
-`createINI.modules`|String|"djerbareporter/1.0.1"|Name and version of module to be loaded
+`createINI.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
 `createINI.timeout`|Int|4|Timeout in hours
 `createINI.jobMemory`|Int|2|Memory in Gb for this job
-`runDjerba.modules`|String|"djerbareporter/1.0.1 djerba/1.12.0"|Name and version of module to be loaded
+`runDjerba.modules`|String|"djerbareporter/2.0.0 djerba/1.13.0"|Name and version of module to be loaded
 `runDjerba.timeout`|Int|10|Timeout in hours
 `runDjerba.jobMemory`|Int|25|Memory in Gb for this job
 
