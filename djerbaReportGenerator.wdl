@@ -91,6 +91,10 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
+                name: "cromwell-tools/3.0",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
+            },
+            {
                 name: "python/3.13.0",
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
@@ -205,7 +209,7 @@ workflow djerbaReportGenerator {
 task queryCallability {
     input {
         String CaseId
-        String modules = "djerbareporter/2.0.0"
+        String modules = "djerbareporter/2.0.0 cromwell-tools/3.0"
         Int timeout = 5
         Int jobMemory = 12
     }
@@ -237,7 +241,7 @@ task queryCoverage {
     input {
         String CaseId
         String assay
-        String modules = "djerbareporter/2.0.0"
+        String modules = "djerbareporter/2.0.0 cromwell-tools/3.0"
         Int timeout = 5
         Int jobMemory = 12
     }

@@ -7,6 +7,7 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 ## Dependencies
 
 * [djerbareporter 2.0.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
+* [cromwell-tools 3.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
 * [python 3.13.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
 * [djerba 1.13.0](https://github.com/oicr-gsi/djerba)
 
@@ -54,10 +55,10 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`queryCallability.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
+`queryCallability.modules`|String|"djerbareporter/2.0.0 cromwell-tools/3.0"|Name and version of module to be loaded
 `queryCallability.timeout`|Int|5|Timeout in hours
 `queryCallability.jobMemory`|Int|12|Memory in Gb for this job
-`queryCoverage.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
+`queryCoverage.modules`|String|"djerbareporter/2.0.0 cromwell-tools/3.0"|Name and version of module to be loaded
 `queryCoverage.timeout`|Int|5|Timeout in hours
 `queryCoverage.jobMemory`|Int|12|Memory in Gb for this job
 `createINI.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
