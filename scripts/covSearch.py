@@ -29,7 +29,12 @@ result = {
 if assay in ("WGTS", "WGS"):
     coverage = get_metric_values(samples, "Mean Coverage Deduplicated")
     if coverage:
-        result["meanCoverage"] = str(round(coverage[0], 1))
+        if len(coverage) > 1:
+            logging.warning(
+                f"Multiple tumor samples with coverage data: "
+                f"{[c[0] for c in coverage]}. Using {coverage[0][0]}."
+            )
+        result["meanCoverage"] = str(round(coverage[0][1], 1))
     else:
         logging.warning("No coverage data available for WGTS/WGS.")
         result["meanCoverage"] = "0"
@@ -37,7 +42,12 @@ if assay in ("WGTS", "WGS"):
 elif assay == "PWGS":
     pairs = get_paired_metric_values(samples, "Mean Coverage Deduplicated", "Mean Insert Size")
     if pairs:
-        coverage_val, insert_size_val = pairs[0]
+        if len(pairs) > 1:
+            logging.warning(
+                f"Multiple tumor samples with both coverage and insert size passing QC: "
+                f"{[p[0] for p in pairs]}. Using {pairs[0][0]}."
+            )
+        _, coverage_val, insert_size_val = pairs[0]
         result["meanCoverage"] = str(int(coverage_val))
         result["medianInsertSize"] = str(int(insert_size_val))
     else:
@@ -48,7 +58,12 @@ elif assay == "PWGS":
 elif assay == "TAR":
     pairs = get_paired_metric_values(samples, "Mean Bait Coverage", "Collapsed Coverage")
     if pairs:
-        raw_val, collapsed_val = pairs[0]
+        if len(pairs) > 1:
+            logging.warning(
+                f"Multiple tumor samples with both raw and collapsed coverage passing QC: "
+                f"{[p[0] for p in pairs]}. Using {pairs[0][0]}."
+            )
+        _, raw_val, collapsed_val = pairs[0]
         result["rawCoverage"] = str(int(raw_val))
         result["collapsedCoverage"] = str(int(collapsed_val))
     else:

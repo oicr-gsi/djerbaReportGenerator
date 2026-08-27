@@ -174,12 +174,12 @@ Output | Type | Description | Labels
  
          if [[ "~{attributes}" == "clinical" && "~{assay}" == "TAR" && "~{project}" == "CHARM2PLAS" ]]; then
              echo "The patient has been referred for the OICR Genomics targeted sequencing REVOLVE assay for early cancer detection through the CHARM2 study. The requisitioners provided one variant known from previous genetic testing which overlaps with the REVOLVE panel: ...... This mutation was confirmed as likely germline and there were no additional somatic mutations identified/Large deletions or duplications are not readily detected by this test/The HGVS cDNA nomenclature and reference sequence were not provided, so we could neither confirm nor refute the presence of the specified variant..." > ~{Prefix}/results_summary.txt
-             $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
+             $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
          fi
  
          if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
              python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
-             $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
+             $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p
          fi
  
          #Copy .ini file into final output directory

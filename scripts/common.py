@@ -33,8 +33,7 @@ def filter_tumor_samples(samples, tumor_only=True):
 
 def get_metric_values(samples, metric_name, metric_level="SAMPLE"):
     """Search each sample's metrics[] for entries matching metric_name
-    that passed QC, and return values."""
-    output = set()
+    that passed QC, and return (group_id, value) pairs, one per sample."""
     values = []
     for s in samples:
         for m in s.get("metrics") or []:
@@ -45,21 +44,19 @@ def get_metric_values(samples, metric_name, metric_level="SAMPLE"):
             if m.get("qcPassed") is not True:
                 continue
             v = m.get("value")
-            if v is None or v in output:
+            if v is None:
                 continue
-            output.add(v)
-            values.append(v)
+            values.append((s.get("groupId"), v))
+            break
     return values
 
 def get_paired_metric_values(samples, metric_name_a, metric_name_b, metric_level="SAMPLE"):
-    """Return (value_a, value_b) pairs only from samples where both named
+    """Return (group_id, value_a, value_b) pairs only from samples where both named
     metrics are present and passed QC on that same sample. This avoids
     pairing a passed value for one metric with a passed value for the
     other metric from a different sample."""
     name_a = metric_name_a.strip().lower()
     name_b = metric_name_b.strip().lower()
-
-    output = set()
     pairs = []
     for s in samples:
         val_a = pass_a = val_b = pass_b = None
@@ -73,16 +70,10 @@ def get_paired_metric_values(samples, metric_name_a, metric_name_b, metric_level
             elif name == name_b:
                 val_b = m.get("value")
                 pass_b = m.get("qcPassed") is True
-
         if val_a is None or val_b is None:
             continue
         if not (pass_a and pass_b):
             continue
-
-        key = (val_a, val_b)
-        if key in output:
-            continue
-        output.add(key)
-        pairs.append(key)
+        pairs.append((s.get("groupId"), val_a, val_b))
 
     return pairs

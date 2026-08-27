@@ -21,8 +21,13 @@ def get_callability(case_json, library_design_code="WG"):
     if not matches:
         logging.warning(f"No tumor qcGroup found with libraryDesignCode={library_design_code}.")
         return None
+    if len(matches) > 1:
+        group_ids = [g.get("groupId") for g in matches]
+        logging.warning(
+            f"Multiple tumor qcGroups found with libraryDesignCode={library_design_code}: "
+            f"{group_ids}. Using {matches[0].get('groupId')}."
+        )
     return matches[0].get("callability")
-
 
 case_json = fetch_case(args.case_id, args.base_url)
 call = get_callability(case_json, library_design_code="WG")
