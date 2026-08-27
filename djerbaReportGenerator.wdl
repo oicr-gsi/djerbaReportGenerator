@@ -171,7 +171,7 @@ workflow djerbaReportGenerator {
             assay = assay,
             patientStudyId = patientStudyId,
             attributes = attributes,
-            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.13.0/lib/python3.10/site-packages/djerba/plugins/supplement/body",
+            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.13.0/lib/python3.13/site-packages/djerba/plugins/supplement/body",
             createArgs = create_ini_args
     }
 
