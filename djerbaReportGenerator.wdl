@@ -386,7 +386,7 @@ task runDjerba {
         File? provenanceSubset
         String modules = "djerbareporter/2.0.0 djerba/1.13.0" 
         Int timeout = 10
-        Int jobMemory = 25
+        Int jobMemory = 30
     }
 
     parameter_meta {
