@@ -261,9 +261,6 @@ def createINI(args):
             }
 
         elif section == "tar.sample":
-            coverage = args.mean_coverage.strip().split("\n")
-            raw_cov = coverage[0] if len(coverage) > 0 else "0"
-            collapsed_cov = coverage[1] if len(coverage) > 1 else "0"
             config[section] = {
                 "attributes": args.attributes,
                 "group_id": args.group_id,
@@ -271,8 +268,8 @@ def createINI(args):
                 "known_variants": "N/A",
                 "sample_type": "N/A",
                 "ichorcna_file": args.ichorcna_file,
-                "raw_coverage": raw_cov,
-                "collapsed_coverage": collapsed_cov
+                "raw_coverage": args.raw_coverage,
+                "collapsed_coverage": args.collapsed_coverage
             }
         
         elif section == "pwgs.sample":
@@ -356,6 +353,8 @@ if __name__ == "__main__":
     parser.add_argument("--maf_file")
     parser.add_argument("--seg_file")
     parser.add_argument("--plots_file")
+    parser.add_argument("--raw_coverage")
+    parser.add_argument("--collapsed_coverage")
 
     # PWGS-specific
     parser.add_argument("--wgs_report_id")

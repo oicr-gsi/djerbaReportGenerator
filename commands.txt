@@ -6,20 +6,18 @@ This section lists command(s) run by djerbaReportGenerator workflow
 djerbaReportGenerator creates clinical and RUO djerba reports by generating intermediate INI files and running Djerba. 
 
 
-Retrieve callability from mutectcallability qc-etl cache if assay type is WGTS or WGS
+Retrieve callability if assay type is WGTS or WGS
 
 ```
     set -euo pipefail
-    LimsId="~{sep=" " LimsId}"
-    python3 $DJERBAREPORTER_ROOT/share/callSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+    python3 $DJERBAREPORTER_ROOT/share/callSearch.py --case-id ~{CaseId}
 ```
 
-Retrieve median_insert_size and coverage_deduplicated from bamqc4merged or hsmetrics qc-etl cache depending on assay type
+Retrieve median_insert_size and coverage_deduplicated for PWGS assay, coverage_deduplicated for WG(T)S assay and raw_coverage and collapsed_coverage for TAR assay. 
 
 ```
     set -euo pipefail
-    LimsId="~{sep=" " LimsId}"
-    python3 $DJERBAREPORTER_ROOT/share/covSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+    python3 $DJERBAREPORTER_ROOT/share/covSearch.py --case-id ~{CaseId} --assay ~{assay}
 ```
 
 Create the intermediate INI file 
@@ -62,46 +60,55 @@ Run Djerba
 
 ```
    set -euo pipefail
-    mkdir -p ~{Prefix}
+        mkdir -p ~{Prefix}
 
-    if [[ "~{assay}" == "WGTS" || "~{assay}" == "WGS" ]]; then    
-        if [[ -n "~{sampleInfo}" ]]; then        
-            rsync -aL "~{sampleInfo}" "~{Prefix}/"    
-        fi    
-        if [[ -n "~{provenanceSubset}" ]]; then        
-            rsync -aL "~{provenanceSubset}" "~{Prefix}/"    
+        if [[ "~{assay}" == "WGTS" || "~{assay}" == "WGS" ]]; then    
+            if [[ -n "~{sampleInfo}" ]]; then        
+                rsync -aL "~{sampleInfo}" "~{Prefix}/"    
+            fi    
+            if [[ -n "~{provenanceSubset}" ]]; then        
+                rsync -aL "~{provenanceSubset}" "~{Prefix}/"    
+            fi
         fi
-    fi
         
-    export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
+        export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
 
-    $DJERBA_ROOT/bin/djerba.py report \
-        -i ~{iniFile} \
-        -o ~{Prefix} \
-        --pdf \
-        --no-archive 
+        if [[ "~{attributes}" == "research" ]]; then        
+        $DJERBA_ROOT/bin/djerba.py report \
+            -i ~{iniFile} \
+            -o ~{Prefix} \
+            --pdf \
+            --no-archive 
+        fi 
 
-    #Run blurbomatic
-    if [[ "~{attributes}" == "research" ]]; then
-        echo "Results summary provided after review of clinical reports. Not available for RUO reports" > ~{Prefix}/results_summary.txt
-        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
-    fi
-
-    if [[ "~{attributes}" == "clinical" && "~{assay}" == "TAR" && "~{project}" == "CHARM2PLAS" ]]; then
-            echo "The patient has been referred for the OICR Genomics targeted sequencing REVOLVE assay for early cancer detection through the CHARM2 study. The requisitioners provided one variant known from previous genetic testing which overlaps with the REVOLVE panel: ...... This mutation was confirmed as likely germline and there were no additional somatic mutations identified/Large deletions or duplications are not readily detected by this test/The HGVS cDNA nomenclature and reference sequence were not provided, so we could neither confirm nor refute the presence of the specified variant..." > ~{Prefix}/results_summary.txt
+        if [[ "~{attributes}" == "clinical" ]]; then
+        $DJERBA_ROOT/bin/djerba.py report \
+            -i ~{iniFile} \
+            -o ~{Prefix} \
+            --pdf
+        fi
+        
+        #Run blurbomatic
+        if [[ "~{attributes}" == "research" ]]; then
+            echo "Results summary provided after review of clinical reports. Not available for RUO reports" > ~{Prefix}/results_summary.txt
             $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
-    fi
+        fi
 
-    if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
-        python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
-        $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
-    fi
+        if [[ "~{attributes}" == "clinical" && "~{assay}" == "TAR" && "~{project}" == "CHARM2PLAS" ]]; then
+            echo "The patient has been referred for the OICR Genomics targeted sequencing REVOLVE assay for early cancer detection through the CHARM2 study. The requisitioners provided one variant known from previous genetic testing which overlaps with the REVOLVE panel: ...... This mutation was confirmed as likely germline and there were no additional somatic mutations identified/Large deletions or duplications are not readily detected by this test/The HGVS cDNA nomenclature and reference sequence were not provided, so we could neither confirm nor refute the presence of the specified variant..." > ~{Prefix}/results_summary.txt
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p 
+        fi
 
-    #Copy .ini file into final output directory
-    cp -L -- "~{iniFile}" "~{Prefix}/djerba_input.ini"
+        if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
+            python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p 
+        fi
 
-    #Compress output dir
-    tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
+        #Copy .ini file into final output directory
+        cp -L -- "~{iniFile}" "~{Prefix}/djerba_input.ini"
+
+        #Compress output dir
+        tar -cvzf ~{Prefix}.tar.gz ~{Prefix}
 ```
 
 

@@ -49,13 +49,11 @@ workflow djerbaReportGenerator {
         String? groupId
         String? wgsReportId
         String patientStudyId
-        Array[String] LimsId
+        String CaseId
         WgtsInput wgtsFiles
         WgsInput wgsFiles
         TarInput tarFiles
         PwgsInput pwgsFiles
-        String djerbaVersion
-        String templateDir
         String outputFileNamePrefix = donor
     }
 
@@ -79,35 +77,29 @@ workflow djerbaReportGenerator {
         tarFiles: "Struct containing optional file paths for the TAR assay"
         pwgsFiles: "Struct containing optional file paths for the PWGS assay"
         patientStudyId: "Patient identifier"
-        LimsId: "Array of LIMS IDs"
-        djerbaVersion: "Djerba software version to use"
-        templateDir: "Path to the supplement_body template directory"
+        CaseId: "Case Identifier"
         outputFileNamePrefix: "Output prefix, customizable based on donor"
     }
 
     meta {
         author: "Aditi Nagaraj Nallan"
         email: "anallan@oicr.on.ca"
-        description: "Given metrics, the workflow will create an intermediate INI file and run djerba to generate Clinical or RUO reports."
+        description: "Given metrics, the workflow will create an intermediate INI file and run djerba to generate Clinical and RUO reports."
         dependencies: [
             {
-                name: "djerbareporter/1.0.0",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/70_djerbareporter.yaml?ref_type=heads"
+                name: "djerbareporter/2.0.0",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
-                name: "pandas/2.1.3",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/60_pandas.yaml?ref_type=heads"
+                name: "cromwell-tools/3.0",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
-                name: "gsi-qc-etl/1.44",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/80_gsiqcetl.yaml?ref_type=heads"
+                name: "python/3.13.0",
+                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
-                name: "python/3.10.6",
-                url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/-/blob/master/code/gsi/20_python.yaml?ref_type=heads"
-            },
-            {
-                name: "djerba/1.11.10",
+                name: "djerba/1.13.0",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -123,54 +115,52 @@ workflow djerbaReportGenerator {
     if (assay == "WGTS" || assay == "WGS") {
         call queryCallability {
             input:
-                LimsId = LimsId,
-                activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
-                archivalCache = "/scratch2/groups/gsi/production/qcetl_archival"
-        }
+                CaseId = CaseId
+                }
     }
 
     call queryCoverage {
         input:
-            LimsId = LimsId,
-            activeCache = "/scratch2/groups/gsi/production/qcetl_v1",
-            archivalCache = "/scratch2/groups/gsi/production/qcetl_archival",
+            CaseId = CaseId,
             assay = assay
         }
 
+    Map[String, String] default = {"callability": "0"}
+
     String create_ini_args =
-    if assay == "PWGS" then
-        "--group_id \"~{groupId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\"  --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.medianInsertSize}\""
-        + (if defined(pwgsFiles.resultsFile) then " --results_file \"~{pwgsFiles.resultsFile}\"" else "")
-        + (if defined(pwgsFiles.vafFile) then " --vaf_file \"~{pwgsFiles.vafFile}\"" else "")
-        + (if defined(pwgsFiles.hbcFile) then " --hbc_file \"~{pwgsFiles.hbcFile}\"" else "")
-        + (if defined(pwgsFiles.bamqcResults) then " --bamqc_results \"~{pwgsFiles.bamqcResults}\"" else "")
-        + (if defined(pwgsFiles.candidateSnvCount) then " --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\"" else "")
-    else if assay == "TAR" then
-        "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
-        + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
-        + (if defined(tarFiles.mafFile) then " --maf_file \"~{tarFiles.mafFile}\"" else "")
-        + (if defined(tarFiles.segFile) then " --seg_file \"~{tarFiles.segFile}\"" else "")
-        + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
-        + " --group_id \"~{groupId}\""
-    else if assay == "WGTS" then
-        "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
-        + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
-        + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
-        + (if defined(wgtsFiles.hrdPath) then " --hrd_path \"~{wgtsFiles.hrdPath}\"" else "")
-        + (if defined(wgtsFiles.mafPath) then " --maf_path \"~{wgtsFiles.mafPath}\"" else "")
-        + (if defined(wgtsFiles.mavisPath) then " --mavis_path \"~{wgtsFiles.mavisPath}\"" else "")
-        + (if defined(wgtsFiles.arribaPath) then " --arriba_path \"~{wgtsFiles.arribaPath}\"" else "")
-        + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
-        + " --callability \"~{queryCallability.callability}\""
-    else if assay == "WGS" then
-        "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.meanCoverage}\" --normal_id \"~{normalId}\""
-        + (if defined(wgsFiles.purpleZip) then " --purple_zip \"~{wgsFiles.purpleZip}\"" else "")
-        + (if defined(wgsFiles.msiFile) then " --msi_file \"~{wgsFiles.msiFile}\"" else "")
-        + (if defined(wgsFiles.hrdPath) then " --hrd_path \"~{wgsFiles.hrdPath}\"" else "")
-        + (if defined(wgsFiles.mafPath) then " --maf_path \"~{wgsFiles.mafPath}\"" else "")
-        + " --callability \"~{queryCallability.callability}\"" 
-    else
-        ""
+        if assay == "PWGS" then
+            "--group_id \"~{groupId}\" --mean_coverage \"~{queryCoverage.coverageResult["meanCoverage"]}\"  --wgs_report_id \"~{wgsReportId}\" --median_insert_size \"~{queryCoverage.coverageResult["medianInsertSize"]}\""
+            + (if defined(pwgsFiles.resultsFile) then " --results_file \"~{pwgsFiles.resultsFile}\"" else "")
+            + (if defined(pwgsFiles.vafFile) then " --vaf_file \"~{pwgsFiles.vafFile}\"" else "")
+            + (if defined(pwgsFiles.hbcFile) then " --hbc_file \"~{pwgsFiles.hbcFile}\"" else "")
+            + (if defined(pwgsFiles.bamqcResults) then " --bamqc_results \"~{pwgsFiles.bamqcResults}\"" else "")
+            + (if defined(pwgsFiles.candidateSnvCount) then " --candidate_snv_count \"~{pwgsFiles.candidateSnvCount}\"" else "")
+        else if assay == "TAR" then
+            "--tumour_id \"~{tumourId}\" --raw_coverage \"~{queryCoverage.coverageResult["rawCoverage"]}\" --collapsed_coverage \"~{queryCoverage.coverageResult["collapsedCoverage"]}\" --normal_id \"~{normalId}\" --cbioId \"~{cbioId}\""
+            + (if defined(tarFiles.ichorcnaFile) then " --ichorcna_file \"~{tarFiles.ichorcnaFile}\"" else "")
+            + (if defined(tarFiles.mafFile) then " --maf_file \"~{tarFiles.mafFile}\"" else "")
+            + (if defined(tarFiles.segFile) then " --seg_file \"~{tarFiles.segFile}\"" else "")
+            + (if defined(tarFiles.plotsFile) then " --plots_file \"~{tarFiles.plotsFile}\"" else "")
+            + " --group_id \"~{groupId}\""
+        else if assay == "WGTS" then
+            "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.coverageResult["meanCoverage"]}\" --normal_id \"~{normalId}\""
+            + (if defined(wgtsFiles.purpleZip) then " --purple_zip \"~{wgtsFiles.purpleZip}\"" else "")
+            + (if defined(wgtsFiles.msiFile) then " --msi_file \"~{wgtsFiles.msiFile}\"" else "")
+            + (if defined(wgtsFiles.hrdPath) then " --hrd_path \"~{wgtsFiles.hrdPath}\"" else "")
+            + (if defined(wgtsFiles.mafPath) then " --maf_path \"~{wgtsFiles.mafPath}\"" else "")
+            + (if defined(wgtsFiles.mavisPath) then " --mavis_path \"~{wgtsFiles.mavisPath}\"" else "")
+            + (if defined(wgtsFiles.arribaPath) then " --arriba_path \"~{wgtsFiles.arribaPath}\"" else "")
+            + (if defined(wgtsFiles.rsemGenesResults) then " --rsem_genes_results \"~{wgtsFiles.rsemGenesResults}\"" else "")
+            + " --callability \"~{select_first([queryCallability.callabilityResult, default])["callability"]}\""
+        else if assay == "WGS" then
+            "--tumour_id \"~{tumourId}\" --mean_coverage \"~{queryCoverage.coverageResult["meanCoverage"]}\" --normal_id \"~{normalId}\""
+            + (if defined(wgsFiles.purpleZip) then " --purple_zip \"~{wgsFiles.purpleZip}\"" else "")
+            + (if defined(wgsFiles.msiFile) then " --msi_file \"~{wgsFiles.msiFile}\"" else "")
+            + (if defined(wgsFiles.hrdPath) then " --hrd_path \"~{wgsFiles.hrdPath}\"" else "")
+            + (if defined(wgsFiles.mafPath) then " --maf_path \"~{wgsFiles.mafPath}\"" else "")
+            + " --callability \"~{select_first([queryCallability.callabilityResult, default])["callability"]}\"" 
+        else
+            ""
 
     call createINI {
         input:
@@ -181,7 +171,7 @@ workflow djerbaReportGenerator {
             assay = assay,
             patientStudyId = patientStudyId,
             attributes = attributes,
-            template_dir = templateDir,
+            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.13.0/lib/python3.13/site-packages/djerba/plugins/supplement/body",
             createArgs = create_ini_args
     }
 
@@ -207,7 +197,6 @@ workflow djerbaReportGenerator {
             Prefix = outputFileNamePrefix,
             reportId = reportId,
             iniFile = createINI.iniFile,
-            djerbaVersion = djerbaVersion,
             sampleInfo = createIntermediaries.sampleInfo,
             provenanceSubset = createIntermediaries.provenanceSubset
     }
@@ -219,18 +208,14 @@ workflow djerbaReportGenerator {
 
 task queryCallability {
     input {
-        Array[String] LimsId
-        String activeCache
-        String archivalCache
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44 python/3.10.6"
+        String CaseId
+        String modules = "djerbareporter/2.0.0 cromwell-tools/3.0"
         Int timeout = 5
         Int jobMemory = 12
     }
 
     parameter_meta {
-        LimsId: "The LIMS Identifiers that will be used to query the cache"
-        activeCache: "Path to the qc etl cache for active projects"
-        archivalCache: "Path to the qc etl cache for all active and inactive projects"
+        CaseId: "The Case Identifier that will be used to query cardea"
         modules: "Name and version of module to be loaded"
         timeout: "Timeout in hours"
         jobMemory: "Memory in Gb for this job" 
@@ -238,8 +223,7 @@ task queryCallability {
 
     command <<<
         set -euo pipefail
-        LimsId="~{sep=" " LimsId}"
-        python3 $DJERBAREPORTER_ROOT/share/callSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache}
+        python3 $DJERBAREPORTER_ROOT/share/callSearch.py --case-id ~{CaseId} 
     >>>
 
     runtime {
@@ -249,25 +233,21 @@ task queryCallability {
     }
 
     output {
-        String callability = read_string("callability.txt")
+        Map[String, String] callabilityResult = read_json("result.json")
     }
 }
 
 task queryCoverage {
     input {
-        Array[String] LimsId
-        String activeCache
-        String archivalCache
+        String CaseId
         String assay
-        String modules = "djerbareporter/1.0.0 gsi-qc-etl/1.44 python/3.10.6"
+        String modules = "djerbareporter/2.0.0 cromwell-tools/3.0"
         Int timeout = 5
         Int jobMemory = 12
     }
 
     parameter_meta {
-        LimsId: "The LIMS Identifiers that will be used to query the cache"
-        activeCache: "Path to the qc etl cache for active projects"
-        archivalCache: "Path to the qc etl cache for all active and inactive projects"
+        CaseId: "The Case Identifier that will be used to query cardea"
         assay: "Assay name"
         modules: "Name and version of module to be loaded"
         timeout: "Timeout in hours"
@@ -276,8 +256,7 @@ task queryCoverage {
 
     command <<<
         set -euo pipefail
-        LimsId="~{sep=" " LimsId}"
-        python3 $DJERBAREPORTER_ROOT/share/covSearch.py --lims-id $LimsId --gsiqcetl-dir ~{activeCache} --gsiqcetl-dir ~{archivalCache} --assay ~{assay}
+        python3 $DJERBAREPORTER_ROOT/share/covSearch.py --case-id ~{CaseId} --assay ~{assay}
     >>>
 
     runtime {
@@ -287,8 +266,7 @@ task queryCoverage {
     }
 
     output {
-        String meanCoverage = read_string("coverage.txt")
-        String? medianInsertSize = read_string("insertsize.txt")
+        Map[String, String] coverageResult = read_json("result.json")
     }
 }
 
@@ -301,9 +279,9 @@ task createINI {
         String assay
         String patientStudyId
         String attributes
-        String template_dir
         String createArgs 
-        String modules = "djerbareporter/1.0.0 python/3.10.6"
+        String template_dir
+        String modules = "djerbareporter/2.0.0"
         Int timeout = 4
         Int jobMemory = 2
     }
@@ -315,8 +293,8 @@ task createINI {
         reportId: "Report identifier"
         assay: "Assay name"
         attributes: "research or clinical"
-        template_dir: "Path to the supplement_body template directory"
         patientStudyId: "Patient identifier"
+        template_dir: "Path to the djerba supplement directory"
         createArgs: "Arguments to pass to the script"
         modules: "Name and version of module to be loaded"
         jobMemory: "Memory in Gb for this job"
@@ -406,10 +384,9 @@ task runDjerba {
         File iniFile
         File? sampleInfo
         File? provenanceSubset
-        String djerbaVersion
-        String modules = "djerbareporter/1.0.0 ~{djerbaVersion} python/3.10.6" 
+        String modules = "djerbareporter/2.0.0 djerba/1.13.0" 
         Int timeout = 10
-        Int jobMemory = 25
+        Int jobMemory = 45
     }
 
     parameter_meta {
@@ -421,7 +398,6 @@ task runDjerba {
         iniFile: "The INI input for Djerba"
         sampleInfo: "Intermediate file with sample information"
         provenanceSubset: "Intermediate empty file required to run Djerba"
-        djerbaVersion: "Djerba software version"
         jobMemory: "Memory in Gb for this job"
         timeout: "Timeout in hours"
         modules: "Name and version of module to be loaded"
@@ -442,11 +418,20 @@ task runDjerba {
         
         export ONCOKB_TOKEN=/.mounts/labs/gsiprojects/gsi/CGI/resources/.oncokb_api_token
 
+        if [[ "~{attributes}" == "research" ]]; then        
         $DJERBA_ROOT/bin/djerba.py report \
             -i ~{iniFile} \
             -o ~{Prefix} \
             --pdf \
             --no-archive 
+        fi 
+
+        if [[ "~{attributes}" == "clinical" ]]; then
+        $DJERBA_ROOT/bin/djerba.py report \
+            -i ~{iniFile} \
+            -o ~{Prefix} \
+            --pdf
+        fi
         
         #Run blurbomatic
         if [[ "~{attributes}" == "research" ]]; then
@@ -456,12 +441,12 @@ task runDjerba {
 
         if [[ "~{attributes}" == "clinical" && "~{assay}" == "TAR" && "~{project}" == "CHARM2PLAS" ]]; then
             echo "The patient has been referred for the OICR Genomics targeted sequencing REVOLVE assay for early cancer detection through the CHARM2 study. The requisitioners provided one variant known from previous genetic testing which overlaps with the REVOLVE panel: ...... This mutation was confirmed as likely germline and there were no additional somatic mutations identified/Large deletions or duplications are not readily detected by this test/The HGVS cDNA nomenclature and reference sequence were not provided, so we could neither confirm nor refute the presence of the specified variant..." > ~{Prefix}/results_summary.txt
-            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p 
         fi
 
         if [[ "~{attributes}" == "clinical" && ( "~{assay}" == "WGTS" || "~{assay}" == "WGS" ) ]]; then
             python3 $DJERBAREPORTER_ROOT/share/blurbomatic.py < ~{Prefix}/~{reportId}_report.json > ~{Prefix}/results_summary.txt
-            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p --no-archive
+            $DJERBA_ROOT/bin/djerba.py update -j ~{Prefix}/~{reportId}_report.json -o ~{Prefix} -s ~{Prefix}/results_summary.txt -p 
         fi
 
         #Copy .ini file into final output directory
