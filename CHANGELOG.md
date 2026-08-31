@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [2.1.0] - 2026-08-31
 ### Changed
 - Updated python scripts to directly query cardea case API for metrics 
 - Added djerba version to the workflow 
 - Updated djerba command for clinical reports to be run without the --no-archive flag
+- Updated python version to 3.13.0 
 
 ## [2.0.9] - 2026-06-12
 ### Changed
