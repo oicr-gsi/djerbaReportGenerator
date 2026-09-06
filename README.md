@@ -88,14 +88,14 @@ Output | Type | Description | Labels
  
  ```
      set -euo pipefail
-     python3 $DJERBAREPORTER_ROOT/share/callSearch.py --case-id ~{CaseId}
+     python3 $DJERBAREPORTER_ROOT/share/callSearch.py --case-id "~{CaseId}"
  ```
  
  Retrieve median_insert_size and coverage_deduplicated for PWGS assay, coverage_deduplicated for WG(T)S assay and raw_coverage and collapsed_coverage for TAR assay. 
  
  ```
      set -euo pipefail
-     python3 $DJERBAREPORTER_ROOT/share/covSearch.py --case-id ~{CaseId} --assay ~{assay}
+     python3 $DJERBAREPORTER_ROOT/share/covSearch.py --case-id "~{CaseId}" --assay ~{assay}
  ```
  
  Create the intermediate INI file 

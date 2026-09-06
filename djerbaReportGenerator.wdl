@@ -223,7 +223,7 @@ task queryCallability {
 
     command <<<
         set -euo pipefail
-        python3 $DJERBAREPORTER_ROOT/share/callSearch.py --case-id ~{CaseId} 
+        python3 $DJERBAREPORTER_ROOT/share/callSearch.py --case-id "~{CaseId}" 
     >>>
 
     runtime {
@@ -256,7 +256,7 @@ task queryCoverage {
 
     command <<<
         set -euo pipefail
-        python3 $DJERBAREPORTER_ROOT/share/covSearch.py --case-id ~{CaseId} --assay ~{assay}
+        python3 $DJERBAREPORTER_ROOT/share/covSearch.py --case-id "~{CaseId}" --assay ~{assay}
     >>>
 
     runtime {
