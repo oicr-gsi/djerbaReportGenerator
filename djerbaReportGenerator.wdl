@@ -99,7 +99,7 @@ workflow djerbaReportGenerator {
                 url: "https://gitlab.oicr.on.ca/ResearchIT/modulator/"
             },
             {
-                name: "djerba/1.13.0",
+                name: "djerba/1.13.2",
                 url: "https://github.com/oicr-gsi/djerba"
             }
         ]
@@ -171,7 +171,7 @@ workflow djerbaReportGenerator {
             assay = assay,
             patientStudyId = patientStudyId,
             attributes = attributes,
-            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.13.0/lib/python3.13/site-packages/djerba/plugins/supplement/body",
+            template_dir = "/.mounts/labs/gsi/modulator/sw/Ubuntu20.04/djerba-1.13.2/lib/python3.13/site-packages/djerba/plugins/supplement/body",
             createArgs = create_ini_args
     }
 
@@ -384,7 +384,7 @@ task runDjerba {
         File iniFile
         File? sampleInfo
         File? provenanceSubset
-        String modules = "djerbareporter/2.0.0 djerba/1.13.0" 
+        String modules = "djerbareporter/2.0.0 djerba/1.13.2" 
         Int timeout = 10
         Int jobMemory = 45
     }

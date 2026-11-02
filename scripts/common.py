@@ -31,7 +31,7 @@ def filter_tumor_samples(samples, tumor_only=True):
     return tumor
 
 
-def get_metric_values(samples, metric_name, metric_level="SAMPLE"):
+def get_metric_values(samples, metric_name, metric_level="SAMPLE", include_failed=False):
     """Search each sample's metrics[] for entries matching metric_name
     that passed QC, and return (group_id, value) pairs, one per sample."""
     values = []
@@ -41,7 +41,7 @@ def get_metric_values(samples, metric_name, metric_level="SAMPLE"):
                 continue
             if metric_level is not None and m.get("metricLevel") != metric_level:
                 continue
-            if m.get("qcPassed") is not True:
+            if not include_failed and m.get("qcPassed") is not True:
                 continue
             v = m.get("value")
             if v is None:
