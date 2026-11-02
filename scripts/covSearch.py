@@ -48,8 +48,8 @@ elif assay == "PWGS":
                 f"{[p[0] for p in pairs]}. Using {pairs[0][0]}."
             )
         _, coverage_val, insert_size_val = pairs[0]
-        result["meanCoverage"] = str(int(coverage_val))
-        result["medianInsertSize"] = str(int(insert_size_val))
+        result["meanCoverage"] = str(round(coverage_val))
+        result["medianInsertSize"] = str(round(insert_size_val))
     else:
         logging.warning("No sample with both coverage and insert size passing QC found for this case")
         result["meanCoverage"] = "0"
@@ -64,12 +64,56 @@ elif assay == "TAR":
                 f"{[p[0] for p in pairs]}. Using {pairs[0][0]}."
             )
         _, raw_val, collapsed_val = pairs[0]
-        result["rawCoverage"] = str(int(raw_val))
-        result["collapsedCoverage"] = str(int(collapsed_val))
+        result["rawCoverage"] = str(round(raw_val))
+        result["collapsedCoverage"] = str(round(collapsed_val))
     else:
-        logging.warning("No sample with both raw and collapsed coverage passing QC found for this case")
-        result["rawCoverage"] = "0"
-        result["collapsedCoverage"] = "0"
+        # Collapsed coverage is the deciding metric for TAR. If it passed QC,
+        # use that sample and take its raw coverage even if raw failed QC.
+        collapsed = get_metric_values(samples, "Collapsed Coverage")
+        if collapsed:
+            if len(collapsed) > 1:
+                logging.warning(
+                    f"Multiple tumor samples with collapsed coverage passing QC: "
+                    f"{[c[0] for c in collapsed]}. Using {collapsed[0][0]}."
+                )
+            group_id, collapsed_val = collapsed[0]
+            result["collapsedCoverage"] = str(round(collapsed_val))
+
+            same_sample = [s for s in samples if s.get("groupId") == group_id]
+            raw = get_metric_values(same_sample, "Mean Bait Coverage", include_failed=True)
+            if raw:
+                logging.warning(
+                    f"Mean Bait Coverage did not pass QC for {group_id}; "
+                    f"reporting the failed value ({raw[0][1]}) alongside passing collapsed coverage."
+                )
+                result["rawCoverage"] = str(round(raw[0][1]))
+            else:
+                logging.warning(f"No Mean Bait Coverage data for {group_id}.")
+                result["rawCoverage"] = "0"
+        else:
+            # Collapsed coverage failed QC on every sample. If raw coverage passed,
+            # use that sample and take its (failed) collapsed value. If raw also
+            # failed everywhere, report 0 and 0.
+            raw_passed = get_metric_values(samples, "Mean Bait Coverage")
+            if raw_passed:
+                group_id, raw_val = raw_passed[0]
+                result["rawCoverage"] = str(round(raw_val))
+
+                same_sample = [s for s in samples if s.get("groupId") == group_id]
+                collapsed_failed = get_metric_values(same_sample, "Collapsed Coverage", include_failed=True)
+                if collapsed_failed:
+                    logging.warning(
+                        f"Collapsed Coverage did not pass QC for {group_id}; "
+                        f"reporting the failed value ({collapsed_failed[0][1]}) alongside passing raw coverage."
+                    )
+                    result["collapsedCoverage"] = str(round(collapsed_failed[0][1]))
+                else:
+                    logging.warning(f"No Collapsed Coverage data for {group_id}.")
+                    result["collapsedCoverage"] = "0"
+            else:
+                logging.warning("Both Mean Bait Coverage and Collapsed Coverage failed QC; reporting 0 and 0.")
+                result["rawCoverage"] = "0"
+                result["collapsedCoverage"] = "0"
 
 else:
     raise ValueError(f"Unsupported assay: {assay}")

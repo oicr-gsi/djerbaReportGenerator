@@ -9,7 +9,7 @@ Given metrics, the workflow will create an intermediate INI file and run djerba 
 * [djerbareporter 2.0.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
 * [cromwell-tools 3.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
 * [python 3.13.0](https://gitlab.oicr.on.ca/ResearchIT/modulator/)
-* [djerba 1.13.0](https://github.com/oicr-gsi/djerba)
+* [djerba 1.13.2](https://github.com/oicr-gsi/djerba)
 
 
 ## Usage
@@ -64,7 +64,7 @@ Parameter|Value|Default|Description
 `createINI.modules`|String|"djerbareporter/2.0.0"|Name and version of module to be loaded
 `createINI.timeout`|Int|4|Timeout in hours
 `createINI.jobMemory`|Int|2|Memory in Gb for this job
-`runDjerba.modules`|String|"djerbareporter/2.0.0 djerba/1.13.0"|Name and version of module to be loaded
+`runDjerba.modules`|String|"djerbareporter/2.0.0 djerba/1.13.2"|Name and version of module to be loaded
 `runDjerba.timeout`|Int|10|Timeout in hours
 `runDjerba.jobMemory`|Int|25|Memory in Gb for this job
 
